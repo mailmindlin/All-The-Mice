@@ -1,0 +1,57 @@
+Usage:
+	java -jar maker.jar [options] [tasks]
+
+Options:
+	-arch <architechture>
+		Set the architechture to compile for. (i.e., armv6 for Raspberry Pi version 1, armv7 for RPIv2)
+	-help [command]
+		Either displays this screen or shows help for the given command
+	-targ <target>
+		Specify the target system (i.e., rpi1, rpi2).
+		This option may override -arch if set
+	--src-asm
+		Set the source directory for assembly code
+	--src-c++
+		Set the source directory for c++ code
+	--src-java
+		Set the source directory for java code (ignored, for compat)
+	--src-ld
+		Set the source directory for linker scripts
+	--bin
+		Sets the folder where the following files will be generated:
+			kernel.elf		(ELF binary file)
+			kernel.list		(listing for compiled code)
+			kernel.map		(map for ELF)
+	--bin-asm
+		Set the folder where the compiled assembly libraries will be stored.
+	--bin-c++
+		Set the folder where the compiled c++ libraries will be stored.
+	--bin-java
+		Set the folder where the compiled java libraries will be stored (ignored, for compat)
+	-o
+		Set the output file location
+	-v
+		Run in verbose mode (unimplemented)
+
+Tasks:
+	about
+		Prints information about this program
+	build
+		sets up, compiles, and links everything
+		:init
+		:compile
+		:link
+	clean
+		remove intermediate files, such as the libraries, elf files, etc.
+		NOTE: MAY remove image file.
+	compile
+		compile all libraries and stuff
+		:compileASM
+	compileASM
+		compile all assembly libraries and stuff
+	init
+		initialize directories and stuff
+	link
+		compile and link everything, then produce ELF, listing, map, and IMG files
+		
+	 
