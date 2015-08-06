@@ -75,6 +75,7 @@ public class StrUtils {
 		items.forEach((t) -> result.add(t.toString()));
 		return result.toArray(new String[result.size()]);
 	}
+	@SuppressWarnings("unchecked")
 	public static <T,R> JSONArray map(JSONArray input, Function<T,R> mapper) {
 		JSONArray result = new JSONArray();
 		for(Object o : input)

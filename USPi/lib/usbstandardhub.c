@@ -244,7 +244,7 @@ boolean USBStandardHubEnumeratePorts (TUSBStandardHub *pThis)
 	for (unsigned nPort = 0; nPort < pThis->m_nPorts; nPort++)
 	{
 		assert (pThis->m_pStatus[nPort] == 0);
-		pThis->m_pStatus[nPort] = malloc (sizeof (TUSBPortStatus));
+		pThis->m_pStatus[nPort] = (TUSBPortStatus*)malloc (sizeof (TUSBPortStatus));
 		assert (pThis->m_pStatus[nPort] != 0);
 
 		if (DWHCIDeviceControlMessage (pHost, pEndpoint0,
@@ -317,7 +317,7 @@ boolean USBStandardHubEnumeratePorts (TUSBStandardHub *pThis)
 
 		// first create default device
 		assert (pThis->m_pDevice[nPort] == 0);
-		pThis->m_pDevice[nPort] = malloc (sizeof (TUSBDevice));
+		pThis->m_pDevice[nPort] = (TUSBDevice*)malloc (sizeof (TUSBDevice));
 		assert (pThis->m_pDevice[nPort] != 0);
 		USBDevice (pThis->m_pDevice[nPort], pHost, Speed, USBDeviceGetAddress (&pThis->m_USBDevice), nPort+1);
 
@@ -375,7 +375,7 @@ boolean USBStandardHubEnumeratePorts (TUSBStandardHub *pThis)
 	}
 
 	// again check for over-current
-	TUSBHubStatus *pHubStatus = malloc (sizeof (TUSBHubStatus));
+	TUSBHubStatus *pHubStatus = (TUSBHubStatus*)malloc (sizeof (TUSBHubStatus));
 	assert (pHubStatus != 0);
 
 	if (DWHCIDeviceControlMessage (pHost, pEndpoint0,

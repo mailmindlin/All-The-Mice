@@ -14,6 +14,12 @@
 #define EXT extern "C++"
 #endif
 namespace ASM {
+template<typename T> inline void write(T* ptr, T data) {
+	*ptr = data;
+}
+template<typename T> inline void writeV(T* volatile ptr, T data) {
+	*ptr = data;
+}
 EXC inline void write16(uint32_t addr, uint16_t data) {
 	uint32_t *ptr = (uint32_t*) addr;
 	asm volatile("strh %[data], [%[reg]]" : : [reg]"r"(ptr), [data]"r"(data));
@@ -26,6 +32,12 @@ EXC inline void write32(uint32_t addr, uint32_t data) {
 //EXC inline void write64(uint32_t addr, uint64_t data) {
 //	uint32_t *ptr = (uint32_t*) addr;
 //}
+template<typename T> inline T read(T* ptr) {
+	return *ptr;
+}
+template<typename T> inline T readV(T* volatile ptr) {
+	return *ptr;
+}
 EXC inline uint16_t read16(uint32_t addr) {
 	uint32_t *ptr = (uint32_t*) addr;
 	uint16_t data;

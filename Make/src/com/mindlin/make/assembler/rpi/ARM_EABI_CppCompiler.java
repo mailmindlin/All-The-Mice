@@ -71,11 +71,12 @@ public class ARM_EABI_CppCompiler extends CCompiler<ARM_EABI_CppCompiler> {
 				} else {
 					String vstr = (String) v;
 					if (k.equals("cpu")) {
-						result.put("-Wa,-mcpu="+vstr);
+						result.put("-Wa,-mcpu="+vstr).put("-mcpu="+vstr).put("-mtune="+vstr);
 					} else if (k.equals("fpu")) {
-						result.put("-Wa,-mfpu="+vstr);
+						result.put("-Wa,-mfpu="+vstr).put("-mfpu="+vstr);
+						result.put("-ftree-vectorize").put("-ffast-math");
 						// force hard floats
-						result.put("-Wa,-mfloat-abi=hard");
+						result.put("-Wa,-mfloat-abi=softfp").put("-mfloat-abi=softfp");
 					} else if (k.equals("gpu")) {
 						result.put("-Wa,-mgpu="+vstr);
 					} else if (k.equals("arch")) {

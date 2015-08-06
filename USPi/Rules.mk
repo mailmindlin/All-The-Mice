@@ -40,7 +40,7 @@ endif
 
 AFLAGS	+= $(ARCH) -DRASPPI=$(RASPPI)
 CFLAGS	+= $(ARCH) -Wall -Wno-psabi -fsigned-char -fno-builtin -nostdinc -nostdlib \
-	   -std=gnu99 -undef -DRASPPI=$(RASPPI) -I $(USPIHOME)/include -O #-DNDEBUG
+	   -std=gnu99 -undef -D__RPI_REVISION=$(RASPPI) -I $(USPIHOME)/include -O #-DNDEBUG
 
 %.o: %.S
 	$(AS) $(AFLAGS) -c -o $@ $<

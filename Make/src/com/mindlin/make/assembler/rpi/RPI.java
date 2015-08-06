@@ -33,6 +33,8 @@ public class RPI implements Compiler {
 			.setCPU(CPU_NAME)
 			.setFPU(FPU_NAME)
 			.setArchitecture(ARCHITECTURE)
+			.define("__RPI_REVISION","1")
+			.define("__RPI_MODEL","B1")
 			.ldFlag("-nostdlib");
 	}
 	@Override
@@ -44,6 +46,8 @@ public class RPI implements Compiler {
 				.setCPU(CPU_NAME)
 				.setFPU(FPU_NAME)
 				.setArchitecture(ARCHITECTURE)
+				.define("__RPI_REVISION","1")
+				.define("__RPI_MODEL","B1")
 				.ldFlag("-nostdlib");
 	}
 
@@ -67,7 +71,9 @@ public class RPI implements Compiler {
 		return new ARM_EABI_Assembler(ARMGNU)
 			.setCPU(CPU_NAME)
 			.setFPU(FPU_NAME)
-			.setArchitecture(ARCHITECTURE);
+			.setArchitecture(ARCHITECTURE)
+			.define("__RPI_REVISION","1")
+			.define("__RPI_MODEL","B1");
 	}
 
 	@Override

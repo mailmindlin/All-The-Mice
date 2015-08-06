@@ -1,0 +1,36 @@
+ifeq ($(strip $(USPIHOME)),)
+USPIHOME = ..
+endif
+
+-include $(USPIHOME)/Config.mk
+
+RASPPI	?= 2
+PREFIX	?= $(USPIHOME)/../yagarto/bin/arm-none-eabi-
+
+CC	= $(PREFIX)gcc
+CPP = $(PREFIX)g++
+AS	= $(CC)
+LD	= $(PREFIX)ld
+AR	= $(PREFIX)ar
+
+ifeq ($(strip $(RASPPI)),1)
+ARCH	?= -march=armv6j -mtune=arm1176jzf-s -mfloat-abi=hard 
+else
+ARCH	?= -march=armv7-a -mtune=cortex-a7 -mfloat-abi=hard
+endif
+
+AFLAGS	+= $(ARCH) -DRASPPI=$(RASPPI)
+CFLAGS	+= $(ARCH) -Wall -Wno-psabi -fsigned-char -fno-builtin -nostdinc -nostdlib \
+	   -std=gnu99 -undef -D__RPI_REVISION=$(RASPPI) -I $(USPIHOME)/include -O #-DNDEBUG
+
+%.o: %.S
+	$(AS) $(AFLAGS) -c -o $@ $<
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+%.o: %.cpp
+	CPP $(CFLAGS) -c -o $@ $<
+
+clean:
+	rm -f *.o *.a *.elf *.lst *.img *.cir *.map *~ $(EXTRACLEAN)

@@ -63,7 +63,7 @@ void USBKeyboardDevice (TUSBKeyboardDevice *pThis, TUSBDevice *pDevice)
 
 	KeyMap (&pThis->m_KeyMap);
 
-	pThis->m_pReportBuffer = malloc (BOOT_REPORT_SIZE);
+	pThis->m_pReportBuffer = (u8*)malloc (BOOT_REPORT_SIZE);
 	assert (pThis->m_pReportBuffer != 0);
 }
 
@@ -127,7 +127,7 @@ boolean USBKeyboardDeviceConfigure (TUSBDevice *pUSBDevice)
 		}
 
 		assert (pThis->m_pReportEndpoint == 0);
-		pThis->m_pReportEndpoint = malloc (sizeof (TUSBEndpoint));
+		pThis->m_pReportEndpoint = (TUSBEndpoint*)malloc (sizeof (TUSBEndpoint));
 		assert (pThis->m_pReportEndpoint != 0);
 		USBEndpoint2 (pThis->m_pReportEndpoint, &pThis->m_USBDevice, pEndpointDesc);
 
@@ -274,7 +274,7 @@ boolean USBKeyboardDeviceStartRequest (TUSBKeyboardDevice *pThis)
 	assert (pThis->m_pReportBuffer != 0);
 	
 	assert (pThis->m_pURB == 0);
-	pThis->m_pURB = malloc (sizeof (TUSBRequest));
+	pThis->m_pURB = (TUSBRequest*)malloc (sizeof (TUSBRequest));
 	assert (pThis->m_pURB != 0);
 	USBRequest (pThis->m_pURB, pThis->m_pReportEndpoint, pThis->m_pReportBuffer, BOOT_REPORT_SIZE, 0);
 	USBRequestSetCompletionRoutine (pThis->m_pURB, USBKeyboardDeviceCompletionRoutine, 0, pThis);

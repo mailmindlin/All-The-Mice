@@ -3,6 +3,7 @@
  *
  *  Created on: Aug 5, 2015
  *      Author: wfeehery17
+ * TODO: DEPRECATED
  */
 
 #ifndef IO_DISPLAY_POSTMAN_HPP_
@@ -38,7 +39,7 @@ bool writeMailbox(MAILBOX_CHANNEL_TYPE channel, uint32_t value) {
 		return false;
 	while (!canWrite())
 		;
-	*GPU_WRITE = channel | value;
+//	*GPU_WRITE = channel | value;
 	return true;
 }
 uint32_t readMailbox(MAILBOX_CHANNEL_TYPE channel) {

@@ -10,7 +10,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <cstdint>
-#include "IO/Display/Framebuffer.hpp"
+#include "IO/Display/Framebuffer.h"
 extern "C" {
 /**
  * Entry point to c++ code

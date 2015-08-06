@@ -33,7 +33,8 @@ public class RPI2 implements Compiler {
 			.setCPU(CPU_NAME)
 			.setFPU(FPU_NAME)
 			.setArchitecture(ARCHITECTURE)
-			.define("__RPI_REVISION","MODEL_B_2")
+			.define("__RPI_REVISION","2")
+			.define("__RPI_MODEL","B2")
 			.ldFlag("-nostdlib");
 	}
 	@Override
@@ -45,7 +46,8 @@ public class RPI2 implements Compiler {
 				.setCPU(CPU_NAME)
 				.setFPU(FPU_NAME)
 				.setArchitecture(ARCHITECTURE)
-				.define("__RPI_REVISION","MODEL_B_2")
+				.define("__RPI_REVISION","2")
+				.define("__RPI_MODEL","B2")
 				.ldFlag("-nostdlib");
 	}
 
@@ -69,7 +71,8 @@ public class RPI2 implements Compiler {
 		return new ARM_EABI_Assembler(ARMGNU)
 			.setCPU(CPU_NAME)
 			.setFPU(FPU_NAME)
-			.define("__RPI_REVISION","MODEL_B_2")
+			.define("__RPI_REVISION","2")
+			.define("__RPI_MODEL","B2")
 			.setArchitecture(ARCHITECTURE);
 	}
 

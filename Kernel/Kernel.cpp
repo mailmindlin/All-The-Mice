@@ -7,10 +7,11 @@
 
 #include "Kernel.hpp"
 
+#include <stdlib.h>
 #include <cstdint>
 
-#include "IO/Display/Framebuffer.hpp"
-#include "stdasm.cpp"
+#include "IO/Display/DisplayDevice.h"
+#include "IO/Display/DisplayUtils.hpp"
 
 #define height 768
 #define width 1024
@@ -19,18 +20,25 @@ extern "C" void kernel_main(uint32_t r0, uint32_t r1, uint32_t atags) {
 	(void) r1;
 	(void) atags;
 	blink(5,0x70000);
-	FrameBufferDescription* result = Displays::GPU::initFrameBuffer(width, height, 16);
-	if (result == 0) {
+	Peripherals::Display::DisplayDevice* screen = new Peripherals::Display::DisplayDevice(width, height, false);
+	if (!screen->init()) {
 		blink(5, 0x77777);
 		return;
 	}
-	uint32_t color = 0xF0F0;//nice red
-	Displays::GPU::drawText(result, 0,0, "Hello, World!", color);
-	char* tmp = (char*)calloc(8, sizeof(char));
-	for(int i=0;i<50;i++) {
-		Displays::GPU::drawText(result, 0,i*8+8, "0x", color);
-		Displays::GPU::toHexString(tmp,0,8,ASM::read32(i*4));
-		Displays::GPU::drawText(result, 16,i*8+8, tmp, color);
+	uint32_t color = COLOR_RGB(247, 28, 132, 255);//nice red 0xF0F0
+	screen->drawText(0,0, "Hello, World!", color);
+	char* tmp = (char*)calloc(40, sizeof(char));
+	tmp[2]=':';
+	tmp[21]=tmp[3]=' ';
+	tmp[22]=tmp[4]='0';
+	tmp[23]=tmp[5]='x';
+	for(uint8_t i=0;i<92;i++) {
+		tmp[0]=i;
+		uint64_t bmp = Peripherals::Display::toncfontTiles[i];
+		toHexString(tmp,5,16,bmp);
+		uint64_t reversified = ((bmp&0xFFFFFFFF00000000)>>32) | ((bmp & 0xFFFFFFFF)<<32);
+		toHexString(tmp,24,16,reversified);
+		screen->drawText(0,i*8+8, tmp, color);
 	}
 	while (true) {
 	}

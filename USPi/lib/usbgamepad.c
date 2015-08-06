@@ -110,7 +110,7 @@ void USBGamePadDevice (TUSBGamePadDevice *pThis, TUSBDevice *pDevice)
     pThis->m_State.nbuttons = 0;
     pThis->m_State.buttons = 0;
 
-	pThis->m_pReportBuffer = malloc (64);
+	pThis->m_pReportBuffer = (u8*)malloc (64);
 	assert (pThis->m_pReportBuffer != 0);
 }
 
@@ -153,7 +153,7 @@ static u32 BitGetUnsigned(void *buffer, u32 offset, u32 length)
     u8 mask;
     u32 result;
 
-    bitBuffer = buffer;
+    bitBuffer = (u8*)buffer;
     result = 0;
     for (u32 i = offset / 8, j = 0; i < (offset + length + 7) / 8; i++) {
         if (offset / 8 == (offset + length - 1) / 8) {
@@ -485,7 +485,7 @@ boolean USBGamePadDeviceStartRequest (TUSBGamePadDevice *pThis)
 	assert (pThis->m_pReportBuffer != 0);
 
 	assert (pThis->m_pURB == 0);
-	pThis->m_pURB = malloc (sizeof (TUSBRequest));
+	pThis->m_pURB = (TUSBRequest*)malloc (sizeof (TUSBRequest));
 	assert (pThis->m_pURB != 0);
 	USBRequest (pThis->m_pURB, pThis->m_pEndpointIn, pThis->m_pReportBuffer, pThis->m_nReportSize, 0);
 	USBRequestSetCompletionRoutine (pThis->m_pURB, USBGamePadDeviceCompletionRoutine, 0, pThis);

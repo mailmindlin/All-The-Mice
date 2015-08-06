@@ -44,7 +44,7 @@ void USBMouseDevice (TUSBMouseDevice *pThis, TUSBDevice *pDevice)
 	pThis->m_pURB = 0;
 	pThis->m_pReportBuffer = 0;
 
-	pThis->m_pReportBuffer = malloc (MOUSE_BOOT_REPORT_SIZE);
+	pThis->m_pReportBuffer = (u8*)malloc (MOUSE_BOOT_REPORT_SIZE);
 	assert (pThis->m_pReportBuffer != 0);
 }
 
@@ -107,7 +107,7 @@ boolean USBMouseDeviceConfigure (TUSBDevice *pUSBDevice)
 		}
 
 		assert (pThis->m_pReportEndpoint == 0);
-		pThis->m_pReportEndpoint = malloc (sizeof (TUSBEndpoint));
+		pThis->m_pReportEndpoint = (TUSBEndpoint*)malloc (sizeof (TUSBEndpoint));
 		assert (pThis->m_pReportEndpoint != 0);
 		USBEndpoint2 (pThis->m_pReportEndpoint, &pThis->m_USBDevice, pEndpointDesc);
 
@@ -175,7 +175,7 @@ boolean USBMouseDeviceStartRequest (TUSBMouseDevice *pThis)
 	assert (pThis->m_pReportBuffer != 0);
 	
 	assert (pThis->m_pURB == 0);
-	pThis->m_pURB = malloc (sizeof (TUSBRequest));
+	pThis->m_pURB = (TUSBRequest*)malloc (sizeof (TUSBRequest));
 	assert (pThis->m_pURB != 0);
 	USBRequest (pThis->m_pURB, pThis->m_pReportEndpoint, pThis->m_pReportBuffer, MOUSE_BOOT_REPORT_SIZE, 0);
 	USBRequestSetCompletionRoutine (pThis->m_pURB, USBMouseDeviceCompletionRoutine, 0, pThis);
@@ -183,8 +183,7 @@ boolean USBMouseDeviceStartRequest (TUSBMouseDevice *pThis)
 	return DWHCIDeviceSubmitAsyncRequest (USBDeviceGetHost (&pThis->m_USBDevice), pThis->m_pURB);
 }
 
-void USBMouseDeviceCompletionRoutine (TUSBRequest *pURB, void *pParam, void *pContext)
-{
+void USBMouseDeviceCompletionRoutine (TUSBRequest *pURB, void *pParam, void *pContext) {
 	TUSBMouseDevice *pThis = (TUSBMouseDevice *) pContext;
 	assert (pThis != 0);
 	

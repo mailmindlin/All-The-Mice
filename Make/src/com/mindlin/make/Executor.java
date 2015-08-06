@@ -16,7 +16,9 @@ import util.AppleNotifier;
 import util.FileUtils;
 import util.Properties;
 import util.StrUtils;
+import util.SymlinkResolver;
 import util.SystemProperty;
+import util.WildcardExpander;
 
 public class Executor {
 	public static void emptyDir(File dir) {
@@ -98,12 +100,12 @@ public class Executor {
 			props.put("libraries", new JSONArray());
 		JSONArray libraries = props.<JSONArray> getAs("libraries");
 		String[] targets = {
-				"memset",
-				"memcpy",
-				"mailbox",
-				"framebuffer",
+//				"memset",
+//				"memcpy",
+//				"mailbox",
+//				"framebuffer",
 //				"postman",
-				"armmodes",
+//				"armmodes",
 				//"scheduler",
 				//"vectors",
 				//"xscheduler"
@@ -129,15 +131,26 @@ public class Executor {
 		{
 			Path USPi = makePath(props.getPath("bin.cpp"), "libuspi.a");
 			if(_compileLibrary(compiler,"libuspi",makePath(props.getPath("src"),"USPi","manifest.json"),
-					makePath(props.getPath("bin.cpp"), "USPi"), USPi, new Path[] {makePath(props.getPath("src"),"USPi","include")},
+					makePath(props.getPath("bin.cpp"), "USPi"), USPi,
 					props.getBool("verbose")))
 				if (!libraries.contains(USPi))
 					libraries.put(USPi);
 				else {
-					System.err.println("Error compiling library: std");
+					System.err.println("Error compiling library: USPi");
 					return false;
 				}
 		}
+//		{
+//			System.out.println("LOOSE");
+//			JSONArray objs = compileLooseLibrary(compiler,"libstd",makePath(props.getPath("src.cpp"), "kernel.json"),
+//					makePath(props.getPath("bin.cpp"),"kernel"), props.getBool("verbose"));
+//			if(objs!=null) {
+//				libraries.putAll(objs);
+//			}else {
+//				System.err.println("Error compiling library: std");
+//				return false;
+//			}
+//		}
 		/** //TODO fix
 		{
 			Path stdLib = makePath(props.getPath("bin.cpp"), "libstd.a");
@@ -209,8 +222,23 @@ public class Executor {
 		if (props.getBool("verbose")) {
 			cc.flag("v").ldFlag("--verbose");
 		}
-
+		
+		//add libraries
 		props.<JSONArray> getAs("libraries").forEach((l) -> (cc.addLibrary(((Path) l).toFile().toString())));
+		
+		//add other kernel files
+		JSONArray otherFiles = loadManifest(makePath(props.getPath("src.cpp"), "kernel.json")).getJSONArray("files");
+		for(int i=0;i<otherFiles.length();i++) {
+			//drop duplicates
+			if(otherFiles.subList(i+1, otherFiles.size()).contains(otherFiles.get(i)))
+				continue;
+			Object o = otherFiles.get(i);
+			if(o instanceof Path)
+				cc.addTarget((Path)o);
+			else
+				cc.addTarget(o.toString());
+		}
+		
 		if (!cc.execute())
 			return false;
 		compiler.objcopy(elf, props.getPath("out"));
@@ -269,63 +297,105 @@ public class Executor {
 			return output;
 		return null;
 	}
-
-	protected static boolean compileLibrary(Compiler compiler, String name, Path input, Path temp,
-			Path output, Path[] includes, boolean verbose) {
-		System.out.println("Compiling library: " + name);
-		CCompiler<?> cc = compiler.CC().define("__LIB_" + name).define("__REALCOMP__").addTarget(input)
-			.setOutput(temp)
-			.setLanguage("gnu++11")
-			.showWarnings(true)
-			.flag("ffreestanding")// b/c library
-			.flag("fPIC")// b/c library
-			.flag("Wextra")// it's an OS, so you probably want to know about *every* warning
-			.flag("nostartfiles")// because it's a library
-			.flag("fexceptions")// I use exceptions, so allow it
-			.flag("static")// static library (custom OS, so no libraries there to link to)
-//			.addOptimization("O3")
-			.link(false);
-		for (Path include : includes)
-			cc.addTarget(include);
-		if (verbose) {
-			cc.flag("v").ldFlag("--verbose");
-		}
-		boolean success = cc.execute();
-		if (!success)
-			return false;
-		success = compiler.AR().setOutput(output).addTarget(temp).execute();
-		return success;
-	}
-	protected static boolean _compileLibrary(Compiler compiler, String name, Path manifest, Path temp, Path output, Path[] includes, boolean verbose) {
+	protected static JSONObject loadManifest(Path manifest) {
 		JSONObject json;
 		//read file
+		System.out.println("Reading "+manifest.toString());
 		{
 			StringBuffer sb = new StringBuffer();
-			BufferedReader br;
-			try {
-				br = Files.newBufferedReader(manifest);
+			try (BufferedReader br = Files.newBufferedReader(manifest);){
 				String line;
 				while((line=br.readLine())!=null)
-					sb.append(line);
+					sb.append(line).append('\n');
+			} catch (IOException e) {
+				e.printStackTrace();
+				return null;
+			}
+			json = new JSONObject(sb.toString());
+		}
+		
+		JSONArray targets = json.getJSONArray("files");
+		json.put("files", WildcardExpander.expandAll(manifest.getParent(), targets));
+		return json;
+	}
+	protected static JSONArray compileLooseLibrary(Compiler compiler, String name, Path manifest, Path outDir, boolean verbose) {
+		JSONObject json = loadManifest(manifest);
+		
+		JSONArray targets = json.getJSONArray("files");
+		JSONArray flags = json.optJSONArray("flags");flags=flags==null?new JSONArray():flags;
+		JSONArray includes = json.getJSONArray("include");
+		JSONArray objects = new JSONArray();
+		outDir.toFile().mkdirs();
+		
+		System.out.println("Making foo");
+		boolean success;
+			//generate output file name
+			Path tout=makePath(outDir,"Foo"+".o");
+			CCompiler<?> cc = compiler.CC()
+				.define("__LIB_" + name)
+				.define("__REALCOMP__")
+				.setOutput(tout)
+				.setLanguage("gnu++11")
+				.showWarnings(true)
+				.flag("ffreestanding")// b/c library
+				.flag("fPIC")// b/c library
+				.flag("Wextra")// it's an OS, so you probably want to know about *every* warning
+				.flag("nostartfiles")// because it's a library
+				.flag("fexceptions")// I use exceptions, so allow it
+				.flag("static")// static library (custom OS, so no libraries there to link to)
+				.link(false);
+			targets.forEach((t)->(cc.addTarget((Path)t)));
+			if (verbose)
+				cc.flag("v").ldFlag("--verbose");
+			includes.forEach((i)->{
+				try {
+					cc.includeDir(SymlinkResolver.resolve(makePath(manifest.getParent(),(String)i)));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			});
+			flags.forEach((f)->(cc.flag((String)f)));
+			success = cc.execute();
+			if (!success)
+				return null;
+			objects.add(tout);
+		return objects;
+	}
+	protected static boolean _compileLibrary(Compiler compiler, String name, Path manifest, Path temp, Path output, boolean verbose) {
+		JSONObject json;
+		//read file
+		System.out.println("Reading "+manifest.toString());
+		{
+			StringBuffer sb = new StringBuffer();
+			try (BufferedReader br = Files.newBufferedReader(manifest);){
+				String line;
+				while((line=br.readLine())!=null)
+					sb.append(line).append('\n');
 			} catch (IOException e) {
 				e.printStackTrace();
 				return false;
 			}
 			json = new JSONObject(sb.toString());
 		}
-		System.out.println(json);
+		
 		JSONArray targets = json.getJSONArray("files");
 		JSONArray flags = json.optJSONArray("flags");flags=flags==null?new JSONArray():flags;
+		JSONArray includes = json.getJSONArray("include");
 		JSONArray objects = new JSONArray();
 		temp.toFile().mkdirs();
+		
+		//expand any wildcard targets
+		targets = WildcardExpander.expandAll(manifest.getParent(), targets);
+		
 		boolean success;
 		for(Object o : targets) {
-			System.out.println("Compiling: "+o);
-			Path tout=makePath(temp,FileUtils.getName(new File((String)o).toPath())+".o");
+			System.out.println("Compiling: "+o.toString());
+			//generate output file name
+			Path tout=makePath(temp,FileUtils.getName((Path)o)+".o");
 			CCompiler<?> cc = compiler.CC()
 				.define("__LIB_" + name)
 				.define("__REALCOMP__")
-				.addTarget(makePath(manifest.getParent(),(String)o))
+				.addTarget((Path)o)
 				.setOutput(tout)
 				.setLanguage("gnu++11")
 				.showWarnings(true)
@@ -338,8 +408,13 @@ public class Executor {
 				.link(false);
 			if (verbose)
 				cc.flag("v").ldFlag("--verbose");
-			for (Path include : includes)
-				cc.includeDir(include);
+			includes.forEach((i)->{
+				try {
+					cc.includeDir(SymlinkResolver.resolve(makePath(manifest.getParent(),(String)i)));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			});
 			flags.forEach((f)->(cc.flag((String)f)));
 			success = cc.execute();
 			if (!success)

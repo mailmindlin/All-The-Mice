@@ -142,7 +142,7 @@ void SMSC951xDevice (TSMSC951xDevice *pThis, TUSBDevice *pDevice)
 	pThis->m_pEndpointBulkOut = 0;
 	pThis->m_pTxBuffer = 0;
 
-	pThis->m_pTxBuffer = malloc (FRAME_BUFFER_SIZE);
+	pThis->m_pTxBuffer = (u8*)malloc (FRAME_BUFFER_SIZE);
 	assert (pThis->m_pTxBuffer != 0);
 }
 

@@ -1,0 +1,16 @@
+{
+	"include": [
+	],
+	"flags": [
+	],
+	"files": [
+		"IO/*.c",
+		"IO/*.cpp",
+		"IO/**/*.c",
+		"IO/**/*.cpp",
+		"util/*.c",
+		"util/*.cpp",
+		"util/**/*.c",
+		"util/**/*.cpp"
+	]
+}

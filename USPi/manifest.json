@@ -1,6 +1,8 @@
 {
+	"include":[
+		"include"
+	],
 	"flags":[
-		"DRASPPI=2",
 		"Wno-psabi",
 		"fsigned-char",
 		"fno-builtin",
@@ -9,7 +11,8 @@
 		"undef",
 		"march=armv7-a",
 		"fpermissive",
-		"Wsign-compare"
+		"Wsign-compare",
+		"Wno-unused-parameter"
 	],
 	"files":[
 		"lib/uspilibrary.c",

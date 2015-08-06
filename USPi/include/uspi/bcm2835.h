@@ -22,7 +22,7 @@
 
 #include <uspios.h>
 
-#if RASPPI == 1
+#if __RPI_REVISION == 1
 #define ARM_IO_BASE		0x20000000
 #else
 #define ARM_IO_BASE		0x3F000000
@@ -33,7 +33,7 @@
 #define GPU_CACHED_BASE		0x40000000
 #define GPU_UNCACHED_BASE	0xC0000000
 
-#if RASPPI == 1
+#if __RPI_REVISION == 1
 	#ifdef GPU_L2_CACHE_ENABLED
 		#define GPU_MEM_BASE	GPU_CACHED_BASE
 	#else

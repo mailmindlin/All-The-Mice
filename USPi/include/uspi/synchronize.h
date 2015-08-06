@@ -33,7 +33,7 @@ extern "C" {
 void uspi_EnterCritical (void);		// disable interrupts (nested calls possible)
 void uspi_LeaveCritical (void);		// enable interrupts (nested calls possible)
 
-#if RASPPI == 1
+#if __RPI_REVISION == 1
 
 //
 // Cache control
