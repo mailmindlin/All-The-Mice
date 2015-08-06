@@ -7,6 +7,11 @@
 
 #include "Kernel.hpp"
 
+#include <cstdint>
+
+#include "IO/Display/Framebuffer.hpp"
+#include "stdasm.cpp"
+
 #define height 768
 #define width 1024
 extern "C" void kernel_main(uint32_t r0, uint32_t r1, uint32_t atags) {
@@ -19,20 +24,15 @@ extern "C" void kernel_main(uint32_t r0, uint32_t r1, uint32_t atags) {
 		blink(5, 0x77777);
 		return;
 	}
-	uint32_t color = 0xF0F0;
-	Displays::GPU::drawLine(result, 50,0,500,100,color);
-	for(int i=0;i<100;i++)
-		Displays::GPU::drawLine(result, rand() % width, rand() % height, rand() % width, rand() % height,color);
+	uint32_t color = 0xF0F0;//nice red
+	Displays::GPU::drawText(result, 0,0, "Hello, World!", color);
+	char* tmp = (char*)calloc(8, sizeof(char));
+	for(int i=0;i<50;i++) {
+		Displays::GPU::drawText(result, 0,i*8+8, "0x", color);
+		Displays::GPU::toHexString(tmp,0,8,ASM::read32(i*4));
+		Displays::GPU::drawText(result, 16,i*8+8, tmp, color);
+	}
 	while (true) {
-//		uint32_t ptr = (uint32_t) result->pointer;
-//		color+=0b100001000001;
-//		for (int y = 0; y < height; y++)
-//			for (int x = 0; x < width; x++) {
-//				Displays::GPU::setPixel(result, x, y, color);
-//				if(y>1)
-//					Displays::GPU::setPixel(result, x, y-2, 0);
-//				ptr += 2;
-//			}
 	}
 }
 void kernel_shutdown() {

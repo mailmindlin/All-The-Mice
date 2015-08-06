@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import util.AppleNotifier;
 import util.FileUtils;
 import util.Properties;
 import util.StrUtils;
@@ -85,6 +86,10 @@ public class Executor {
 			return init(props);
 		else if (command.equals("check"))
 			return check(props);
+		else if (command.equals("notify")) {
+			AppleNotifier.displayNotification("All tasks were completed successfully" , "Success", "Make "+Main.VERSION, AppleNotifier.STD_SOUND);
+			return true;
+		}
 		return false;
 	}
 
@@ -113,7 +118,7 @@ public class Executor {
 					return false;
 				}
 		System.out.println("Successfully made libraries: "
-				+ StrUtils.concatWithSpaces(StrUtils.toStringArray(libraries)));
+				+ StrUtils.concatWithSpaces(StrUtils.toStringArray(StrUtils.map(libraries,Path::getFileName))));
 		return true;
 	}
 
@@ -121,6 +126,18 @@ public class Executor {
 		boolean success = true;
 		success = success | runTask(props, compiler, "compileASM");
 		JSONArray libraries = props.<JSONArray> getAs("libraries");
+		{
+			Path USPi = makePath(props.getPath("bin.cpp"), "libuspi.a");
+			if(_compileLibrary(compiler,"libuspi",makePath(props.getPath("src"),"USPi","manifest.json"),
+					makePath(props.getPath("bin.cpp"), "USPi"), USPi, new Path[] {makePath(props.getPath("src"),"USPi","include")},
+					props.getBool("verbose")))
+				if (!libraries.contains(USPi))
+					libraries.put(USPi);
+				else {
+					System.err.println("Error compiling library: std");
+					return false;
+				}
+		}
 		/** //TODO fix
 		{
 			Path stdLib = makePath(props.getPath("bin.cpp"), "libstd.a");
@@ -207,6 +224,7 @@ public class Executor {
 			Path p = (Path)lib;
 			if (!Files.exists(p)) {
 				System.err.println("\tError: library "+p.toFile().getName()+" not generated!");
+				AppleNotifier.displayNotification("I can't seem to find "+p.toFile().getName()+"..." , "Library NOT generated", "Make "+Main.VERSION, AppleNotifier.STD_SOUND);
 				System.exit(-1);
 			} else {
 				try {
@@ -220,12 +238,14 @@ public class Executor {
 		});
 		if (!Files.exists(props.getPath("out"))) {
 			System.err.println("\tError: image not generated!");
+			AppleNotifier.displayNotification("It just seems to have disappeared!" , "Image NOT generated", "Make "+Main.VERSION, AppleNotifier.STD_SOUND);
 			System.exit(-1);
 		} else {
 			try {
-				System.out.println("\tThe image appears to have been generated correctly at "
-						+ props.getPath("out").toString() + " ("
-						+ (Files.size(props.getPath("out")) / 1024.0) + " Kb)");
+				String msg = "The image looks pretty good to me at " + props.getPath("out").toString() + " ("
+						+ (Files.size(props.getPath("out")) / 1024.0) + " KB)";
+				System.out.println('\t' + msg);
+				AppleNotifier.displayNotification(msg , "Image generated", "Make "+Main.VERSION, AppleNotifier.STD_SOUND);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -295,10 +315,11 @@ public class Executor {
 		}
 		System.out.println(json);
 		JSONArray targets = json.getJSONArray("files");
+		JSONArray flags = json.optJSONArray("flags");flags=flags==null?new JSONArray():flags;
 		JSONArray objects = new JSONArray();
 		temp.toFile().mkdirs();
 		boolean success;
-		for(Object o:targets) {
+		for(Object o : targets) {
 			System.out.println("Compiling: "+o);
 			Path tout=makePath(temp,FileUtils.getName(new File((String)o).toPath())+".o");
 			CCompiler<?> cc = compiler.CC()
@@ -318,7 +339,8 @@ public class Executor {
 			if (verbose)
 				cc.flag("v").ldFlag("--verbose");
 			for (Path include : includes)
-				cc.addTarget(include);
+				cc.includeDir(include);
+			flags.forEach((f)->(cc.flag((String)f)));
 			success = cc.execute();
 			if (!success)
 				return false;

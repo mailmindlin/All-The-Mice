@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
+import org.json.JSONArray;
+
 public class StrUtils {
 	public static String concatWithSpaces(String... strings) {
 		StringBuilder result = new StringBuilder();
@@ -72,6 +74,12 @@ public class StrUtils {
 		final ArrayList<String> result = new ArrayList<String>();
 		items.forEach((t) -> result.add(t.toString()));
 		return result.toArray(new String[result.size()]);
+	}
+	public static <T,R> JSONArray map(JSONArray input, Function<T,R> mapper) {
+		JSONArray result = new JSONArray();
+		for(Object o : input)
+			result.put(mapper.apply((T)o));
+		return result;
 	}
 	/**
 	 * Converts a {@code List<T>} to a {@code String[]} by calling applying function

@@ -111,7 +111,7 @@ public class ARM_EABI_CppCompiler extends CCompiler<ARM_EABI_CppCompiler> {
 				if (o instanceof Path) {
 					String p = ((Path) o).toFile().getPath();
 					if (Files.isDirectory((Path) o))
-						result.put("-Wl,-L," + p).put("-I " + p);
+						result.put("-Wl,-L," + p).put("-I").put(p);
 //					else
 //						result.put("-l " + ((Path) o).toFile().getPath());
 				} else {
@@ -123,8 +123,12 @@ public class ARM_EABI_CppCompiler extends CCompiler<ARM_EABI_CppCompiler> {
 				return;
 			if(o.toString().endsWith(".o"))
 			 	data.getJSONArray("targets").add(new File((String)o).toPath());
-			else
-				result.put("-Wl,--library,"+FileUtils.getNameExt(o.toString())).put("-l "+FileUtils.getNameExt(o.toString()));
+			else {
+				//libraries in format libNAME.a must be converted to NAME
+				String libname = FileUtils.getNameExt(o.toString()).substring(3);
+				libname = libname.substring(0, libname.length()-2);
+				result.put("-Wl,--library,"+libname).put("-l").put(libname);
+			}
 		});
 		data.getJSONArray("targets").forEach((o)->{
 			if (o instanceof Path) {

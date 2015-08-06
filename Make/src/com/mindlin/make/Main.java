@@ -9,13 +9,14 @@ import java.util.HashSet;
 import java.util.ListIterator;
 import java.util.Set;
 
+import util.AppleNotifier;
 import util.Properties;
 import util.SymlinkResolver;
 import util.SystemProperty;
 
 public class Main {
 	public final static String OS_VERSION="experimental alpha 0.0.25";
-	public final static String VERSION="alpha 0.1.5";
+	public final static String VERSION="alpha 0.2.0";
 	public final static Properties properties = new Properties();
 	static Compiler compiler;
 	public final static ArrayList<String> tasks = new ArrayList<String>();
@@ -78,6 +79,7 @@ public class Main {
 			.addInference("bin.asm",SymlinkResolver.resolve(new File(bin, "asm").getAbsoluteFile()))
 			.addInference("bin.cpp", SymlinkResolver.resolve(new File(bin, "cpp").getAbsoluteFile()))
 			.addInference("bin.java", SymlinkResolver.resolve(new File(bin, "java").getAbsoluteFile()))
+			.addInference("src",SymlinkResolver.resolve(new File(".").getAbsoluteFile()))
 			.addInference("src.asm",SymlinkResolver.resolve(new File("asm/rpi").getAbsoluteFile()))
 			.addInference("src.ld",SymlinkResolver.resolve(new File("linker").getAbsoluteFile()))
 			.addInference("src.cpp", SymlinkResolver.resolve(new File("Kernel").getAbsoluteFile()))
@@ -103,8 +105,12 @@ public class Main {
 	}
 	public static void exec(String cmd) {
 		final String command=cmd.toLowerCase().trim();
-		Executor.runTask(properties, compiler, command);
-		finished.add(command);
+		if(Executor.runTask(properties, compiler, command))
+			finished.add(command);
+		else {
+			AppleNotifier.displayNotification("An error occurred when running task '"+command+"'." , "Error", "Make "+Main.VERSION, AppleNotifier.STD_SOUND);
+			System.exit(-1);
+		}
 	}
 	public static void printHelp(String command) {
 		if(!printData("util/data/"+command+".txt")) {

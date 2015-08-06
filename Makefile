@@ -22,11 +22,12 @@ OUT?=$(BIN)Kernel.img
 ARGS?=
 # You can compile for the raspberry pi version 2 by specifying 'TARGET=rpi2' in the command line.
 # Otherwise, it defaults to rpi
-ARCH?=armv6
-TARGET?=rpi1
+ARCH?=armv7
+TARGET?=rpi2
 MAKER?=$(JBIN)Make.jar
 JFLAGS=-arch $(ARCH) -targ $(TARGET) --src-asm $(ASRC) --src-java $(JSRC) --src-c++ $(CSRC) --src-ld $(LSRC) --bin-asm $(ABIN) --bin $(BIN) --bin-java $(JBIN) --bin-asm $(ABIN) -o $(OUT) $(ARGS)
 MK?=java -jar $(MAKER) $(JFLAGS)
+NOTIFIER?=java -cp $(MAKER) util.AppleNotifier
 all: init
 	$(MK) clean build check
 about: init
@@ -55,5 +56,6 @@ mount: init
 	rm -f /Volumes/BOOT/Kernel.img
 	cp $(OUT) /Volumes/BOOT/Kernel.img
 	diskutil eject /dev/disk1 #fix ejecting the disk
+	$(NOTIFIER) "Copied Kernel onto SD card." "Ejected SD card."
 
 init:

@@ -110,7 +110,8 @@ public class ARM_EABI_CCompiler extends CCompiler<ARM_EABI_CCompiler> {
 		data.getJSONArray("includes").forEach((o)->{
 			if (o instanceof Path) {
 				if(Files.isDirectory((Path)o))
-					result.put("-Wl,-L,"+((Path) o).toFile().getPath());
+					result.put("-I").put(((Path) o).toFile().getPath());
+//					result.put("-Wl,-L,"+((Path) o).toFile().getPath());
 				else
 					result.put("-l"+((Path) o).toFile().getPath());
 			} else {
