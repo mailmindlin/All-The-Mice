@@ -9,6 +9,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 
+import javax.script.ScriptException;
+
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -20,6 +24,8 @@ import util.SymlinkResolver;
 import util.SystemProperty;
 import util.WildcardExpander;
 
+import com.mindlin.jjsbridge.JSBridge;
+
 public class Executor {
 	public static void emptyDir(File dir) {
 		if (!dir.exists())
@@ -30,17 +36,66 @@ public class Executor {
 			child.delete();
 		}
 	}
-
+	
 	public static Path makePath(Path src, String... after) {
 		String tmp = StrUtils.concat((i) -> (i + File.separator), after);
 		return src.resolve(tmp.substring(0, tmp.length() - File.separator.length()));
 	}
+	
+	protected final Compiler compiler;
+	protected final Properties props;
+	protected final JSBridge engine;
+	public Executor(Compiler compiler, Properties props) {
+		this.props = props;
+		this.compiler = compiler;
+		
+		engine = new JSBridge();
+		init();
+	}
 
-	public static boolean init(Properties props) {
+	public boolean init() {
 		props.getFile("bin").mkdirs();
 		props.getFile("bin.asm").mkdirs();
 		props.getFile("bin.cpp").mkdirs();
 		props.getFile("bin.java").mkdirs();
+		
+		try (BufferedReader br = Files.newBufferedReader(props.getFile("script").toPath())) {
+			StringBuffer sb = new StringBuffer();
+			String line;
+			while((line=br.readLine())!=null)
+				sb.append(line).append('\n');
+			engine.eval(sb.toString());
+		} catch (ScriptException|IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	public boolean runTask(String command) {
+		System.out.println(":" + command.trim());
+		if (command.equals("about")) {
+			System.out.println("Version " + Main.OS_VERSION + " of MMOS, written by Mailmindlin, 2015.");
+			System.out.println("Compiler (this piece of software) version " + Main.VERSION);
+			System.out.println("\nSystem properties: ");
+			for (Entry<Object, Object> prop : (System.getProperties().entrySet()))
+				System.out.println(prop.getKey() + ": " + prop.getValue());
+		} else {
+			try {
+				ScriptObjectMirror o = (ScriptObjectMirror)engine.invokeFunction("getAvailableTasks");
+				o.callMember(command.trim(), props, compiler);
+			} catch (RuntimeException e) {
+				if(e.getCause() instanceof NoSuchMethodException) {
+					System.err.println("Invalid task '"+command+"'.");
+					return false;
+				}
+				e.printStackTrace();	
+			} catch (NoSuchMethodException e) {
+				System.err.println("Invalid task '"+command+"'.");
+				return false;
+			} catch (ScriptException e) {
+				e.printStackTrace();
+			}
+		}
 		return true;
 	}
 
@@ -84,8 +139,8 @@ public class Executor {
 					&& runTask(props, compiler, "link");
 		else if (command.equals("link"))
 			return link(props, compiler);
-		else if (command.equals("init"))
-			return init(props);
+//		else if (command.equals("init"))
+//			return init(props);
 		else if (command.equals("check"))
 			return check(props);
 		else if (command.equals("notify")) {

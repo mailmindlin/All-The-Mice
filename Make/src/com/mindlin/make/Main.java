@@ -18,9 +18,10 @@ public class Main {
 	public final static String OS_VERSION="experimental alpha 0.0.25";
 	public final static String VERSION="alpha 0.2.0";
 	public final static Properties properties = new Properties();
-	static Compiler compiler;
+	public static Compiler compiler;
 	public final static ArrayList<String> tasks = new ArrayList<String>();
 	public final static Set<String> finished=new HashSet<String>();
+	public static Executor executor;
 	public static void main(String[] fred) throws IOException {
 		parseArguments(fred);
 		inferUnset();
@@ -80,6 +81,7 @@ public class Main {
 			.addInference("bin.cpp", SymlinkResolver.resolve(new File(bin, "cpp").getAbsoluteFile()))
 			.addInference("bin.java", SymlinkResolver.resolve(new File(bin, "java").getAbsoluteFile()))
 			.addInference("src",SymlinkResolver.resolve(new File(".").getAbsoluteFile()))
+			.addInference("script",SymlinkResolver.resolve(new File("make.js").getAbsoluteFile()))
 			.addInference("src.asm",SymlinkResolver.resolve(new File("asm/rpi").getAbsoluteFile()))
 			.addInference("src.ld",SymlinkResolver.resolve(new File("linker").getAbsoluteFile()))
 			.addInference("src.cpp", SymlinkResolver.resolve(new File("Kernel").getAbsoluteFile()))
@@ -102,10 +104,11 @@ public class Main {
 					System.out.print("->"+(((File) b).exists()?"exists":"doesn't exist"));
 				System.out.println();
 			});
+		executor = new Executor(compiler, properties);
 	}
 	public static void exec(String cmd) {
 		final String command=cmd.toLowerCase().trim();
-		if(Executor.runTask(properties, compiler, command))
+		if(executor.runTask(command))
 			finished.add(command);
 		else {
 			AppleNotifier.displayNotification("An error occurred when running task '"+command+"'." , "Error", "Make "+Main.VERSION, AppleNotifier.STD_SOUND);
