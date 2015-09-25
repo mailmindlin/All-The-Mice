@@ -9,6 +9,7 @@ function emptyDir(dir) {
 	}
 }
 function mapPath(props, input) {
+	
 	if(input.
 }
 function assemble(compiler, input, output) {

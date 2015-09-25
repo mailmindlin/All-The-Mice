@@ -2,16 +2,11 @@
  * kernel.c
  *
  *  Created on: Aug 5, 2015
- *      Author: wfeehery17
+ *      Author: mailmindlin
  */
 
 #include "Kernel.hpp"
-
-#include <stdlib.h>
-#include <cstdint>
-
-#include "IO/Display/DisplayDevice.h"
-#include "IO/Display/DisplayUtils.hpp"
+#include "prelib.h"
 
 #define height 768
 #define width 1024

@@ -2,7 +2,7 @@
  * Device.cpp
  *
  *  Created on: Aug 5, 2015
- *      Author: wfeehery17
+ *      Author: mailmindlin
  */
 
 #include "Device.h"

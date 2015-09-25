@@ -2,7 +2,7 @@
  * syscfg.h
  *
  *  Created on: Aug 6, 2015
- *      Author: wfeehery17
+ *      Author: mailmindlin
  */
 
 #ifndef UTIL_SYSCFG_H_
@@ -19,6 +19,12 @@
 #define MODEL_B1P		3//B+
 #define MODEL_B2		4
 #define MODEL_CM		5
+
+//check that __RPI_MODEL is defined
+#ifndef __RPI_MODEL
+#warning __RPI_MODEL not set. Defaulting to MODEL_B2
+#define __RPI_MODEL MODEL_B2
+#endif
 
 //Different Raspberry Pi's have different amounts of RAM
 #if (__RPI_MODEL == MODEL_A1) || (__RPI_MODEL == MODEL_A1P)
@@ -44,6 +50,11 @@
 #define MEM_KERNEL_END		(MEM_KERNEL_START + KERNEL_MAX_SIZE)
 #define MEM_KERNEL_STACK	(MEM_KERNEL_END + KERNEL_STACK_SIZE)		// expands down
 
+#ifndef __RPI_REVISION
+	#warning __RPI_REVISION not set. Defaulting to 2.
+	#define __RPI_REVISION 2
+#endif
+
 #if __RPI_REVISION == 1
 	#define CORES				1
 	#define MEM_ABORT_STACK		(MEM_KERNEL_STACK + EXCEPTION_STACK_SIZE)	// expands down
@@ -51,12 +62,14 @@
 	#define MEM_PAGE_TABLE1		MEM_IRQ_STACK				// must be 16K aligned
 	#define ARM_STRICT_ALIGNMENT
 	#define GPU_L2_CACHE_ENABLED
-#else
+#elif __RPI_REVISION == 2
 	#define ARM_ALLOW_MULTI_CORE	// slower on single core if defined
 	#define CORES				4					// must be a power of 2
 	#define MEM_ABORT_STACK		(MEM_KERNEL_STACK + KERNEL_STACK_SIZE * (CORES-1) + EXCEPTION_STACK_SIZE)
 	#define MEM_IRQ_STACK		(MEM_ABORT_STACK + EXCEPTION_STACK_SIZE * (CORES-1) + EXCEPTION_STACK_SIZE)
 	#define MEM_PAGE_TABLE1		(MEM_IRQ_STACK + EXCEPTION_STACK_SIZE * (CORES-1))
+#else
+	#error unknown value of __RPI_REVISION
 #endif
 
 #define MEM_HEAP_START		0x400000

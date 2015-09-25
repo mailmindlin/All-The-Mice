@@ -2,7 +2,7 @@
  * alloc.h
  *
  *  Created on: Aug 21, 2015
- *      Author: wfeehery17
+ *      Author: mailmindlin
  */
 
 #ifndef UTIL_ALLOC_H_

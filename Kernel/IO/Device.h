@@ -2,7 +2,7 @@
  * Device.h
  *
  *  Created on: Aug 5, 2015
- *      Author: wfeehery17
+ *      Author: mailmindlin
  */
 
 #ifndef IO_DEVICE_H_

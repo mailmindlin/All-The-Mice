@@ -2,7 +2,7 @@
  * DisplayUtils.hpp
  *
  *  Created on: Aug 5, 2015
- *      Author: wfeehery17
+ *      Author: mailmindlin
  *
  * Provides many helpful functions involving RGB colors of different bitdepths, to make life easier
  */
@@ -23,6 +23,7 @@
 #define COLOR_BLACK	0
 
 #if COLOR_DEPTH == 8
+	#pragma message ("Using color depth of 8")
 	typedef uint8_t TScreenColor;
 
 	#define COLOR_NORMAL16			COLOR16 (31, 31, 31)
@@ -33,6 +34,7 @@
 	#define COLOR_HIGH				2
 	#define COLOR_HALF				3
 #elif COLOR_DEPTH == 16
+	#pragma message ("Using color depth of 16")
 	#define COLOR_RGB(red, green, blue) COLOR16(red, green, blue)
 	typedef uint16_t TScreenColor;
 
@@ -40,6 +42,7 @@
 	#define COLOR_HIGH				COLOR16 (31, 0, 0)
 	#define COLOR_HALF				COLOR16 (0, 0, 31)
 #elif COLOR_DEPTH == 32
+	#pragma message ("Using color depth of 32")
 	#define COLOR_RGB(red, green, blue, alpha) COLOR32(red, green, blue, alpha)
 	typedef uint32_t TScreenColor;
 
@@ -53,7 +56,7 @@
 const char* hexDigits = "0123456789ABCDEF";
 void toHexString(char* str, size_t offset, size_t digits, uint64_t num) {
 	char* pos = str + digits + offset;
-	for (int i = 0; i < digits; i++) {
+	for (unsigned int i = 0; i < digits; i++) {
 		*(--pos) = hexDigits[(num >> (i * 4)) & 0xF];
 	}
 }

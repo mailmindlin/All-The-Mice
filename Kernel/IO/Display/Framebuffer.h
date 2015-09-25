@@ -2,7 +2,7 @@
  * Framebuffer.h
  *
  *  Created on: Aug 5, 2015
- *      Author: wfeehery17
+ *      Author: mailmindlin
  */
 
 #ifndef IO_DISPLAY_FRAMEBUFFER_H_
@@ -12,7 +12,6 @@
 #include "FrameBufferDescription.hpp"
 #include "Mailbox.h"
 #include "DisplayUtils.hpp"
-#include <string.h> //for memset
 #include "../../util/synchronize.h"
 #include "../../util/util.hpp"
 #include "../memaddr.hpp"

@@ -1,61 +1,51 @@
-# Current directory
-ROOT?=$(shell pwd)/
-# For the binary files
-BIN?=$(ROOT)bin/
-EMULATOR?=$(ROOT)qemu
-# Not really used
-JBIN?=$(BIN)java/
-# For the compiled assembly files
-ABIN?=$(BIN)asm/
-# For the compiled C++ libraries
-CBIN?=$(BIN)cpp/
-# Where the java source code is
-JSRC?=$(ROOT)java/
-# Assembly source code
-ASRC?=$(ROOT)asm/rpi
-# C++ source code
-CSRC?=$(ROOT)Kernel
-# linker script source
-LSRC?=$(ROOT)linker/
-# Output binary
-OUT?=$(BIN)Kernel.img
-ARGS?=
-# You can compile for the raspberry pi version 2 by specifying 'TARGET=rpi2' in the command line.
-# Otherwise, it defaults to rpi
-ARCH?=armv7
-TARGET?=rpi2
-MAKER?=$(JBIN)Make.jar
-JFLAGS=-arch $(ARCH) -targ $(TARGET) --src-asm $(ASRC) --src-java $(JSRC) --src-c++ $(CSRC) --src-ld $(LSRC) --bin-asm $(ABIN) --bin $(BIN) --bin-java $(JBIN) --bin-asm $(ABIN) -o $(OUT) $(ARGS)
-MK?=java -jar $(MAKER) $(JFLAGS)
-NOTIFIER?=java -cp $(MAKER) util.AppleNotifier
-all: init
-	$(MK) clean build check
-about: init
-	$(MK) about
+# Assumes that you allready have yagarto (http://sourceforge.net/projects/yagarto/) installed
+include Config.mk
 
-build: init
-	$(MK) build
+mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
+current_dir := $(abspath $(notdir $(patsubst %/,%,$(dir $(mkfile_path)))))
+KERNEL = $(current_dir)/Kernel
+rwildcard=$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
+winsfix = $(subst /,\,$(1))
 
-check: init
-	$(MK) check
+CPPTARGETx = $(patsubst %.cpp, $(abspath %.o), $(call rwildcard, Kernel, *.cpp))
+ASMTARGETx = asm/rpi/
 
-clean: init
-	$(MK) clean $(JFLAGS)
+# OS-Specific tasks
+ifeq ($(OS),Windows_NT)
+	CPPTARGETS = $(call winsfix, $(CPPTARGETx))
+	ASMTARGETS = $(call winsfix, $(ASMTARGETx))
+else
+	echo "boop"
+	CPPTARGETS = $(CPPTARGETx)
+	include Make_NIX
+endif
 
-compile: init
-	$(MK) compile
+all: buildCpp
+	@echo version 5.1
+	@echo $(CPP)
 
-link: init
-	$(MK) link
+buildCpp: bin/kernel
+	$(CPP) $(CPPFLAGS) -c E:\Documents\GitHub\All-The-Mice\Kernel\Kernel.cpp -o E:\Documents\GitHub\All-The-Mice\bin\kernel\Kernel.o
 
-emulate:
-	$(MAKE) -C $(EMULATOR) BIN=$(BIN)
+buildAsm: bin/asm
+	
 
-#this should copy the kernel to a SD card inserted into a linux/mac machine. TODO: fix for windows
-mount: init
-	rm -f /Volumes/BOOT/Kernel.img
-	cp $(OUT) /Volumes/BOOT/Kernel.img
-	diskutil eject /dev/disk1 #fix ejecting the disk
-	$(NOTIFIER) "Copied Kernel onto SD card." "Ejected SD card."
+bin:
+	mkdir bin
 
-init:
+bin/kernel: bin
+	@md bin\kernel
+
+bin/asm: bin
+	@md bin\asm
+
+%.o: %.S
+	$(AS) $(AFLAGS) -c -o $@ $<
+
+%.o: %.c
+	@echo building C
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+Kernel/%.o: Kernel/%.cpp
+	@echo building CPP
+	$(CPP) $(CPPFLAGS) -c -o $@ $<

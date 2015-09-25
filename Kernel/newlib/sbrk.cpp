@@ -2,7 +2,7 @@
  * sbrk.cpp
  *
  *  Created on: Mar 11, 2015
- *      Author: wfeehery17
+ *      Author: mailmindlin
  */
 #ifndef NEWLIB_SBRK_CPP_
 #define NEWLIB_SBRK_CPP_

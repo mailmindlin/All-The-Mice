@@ -2,15 +2,19 @@
  * Kernel.hpp
  *
  *  Created on: Aug 5, 2015
- *      Author: wfeehery17
+ *      Author: mailmindlin
  */
 
 #ifndef KERNEL_HPP_
 #define KERNEL_HPP_
+#include "../util/prelib.h"
 #include <stddef.h>
-#include <stdint.h>
-#include <cstdint>
 #include "IO/Display/Framebuffer.h"
+#include <stdlib.h>
+#include "IO/Display/DisplayDevice.h"
+#include "IO/Display/DisplayUtils.hpp"
+#include <cstdint>
+
 extern "C" {
 /**
  * Entry point to c++ code

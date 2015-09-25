@@ -1,0 +1,8 @@
+clean:
+	del /s *.o
+	del /s *.a
+	del /s *.elf
+	del *.lst
+	del *.img
+	del *.cir
+	del *.map

@@ -2,7 +2,7 @@
  * new.cpp
  *
  *  Created on: Aug 21, 2015
- *      Author: wfeehery17
+ *      Author: mailmindlin
  */
 
 #include "new.h"

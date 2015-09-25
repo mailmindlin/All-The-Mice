@@ -2,13 +2,15 @@
  * mmio.c
  *
  *  Created on: Aug 5, 2015
- *      Author: wfeehery17
+ *      Author: mailmindlin
  */
 
 #ifndef STDASM_CPP_
 #define STDASM_CPP_
+
 #include <stddef.h>
 #include <stdint.h>
+
 #if (!defined(EXC)) || (!defined(EXT))
 #define EXC extern "C"
 #define EXT extern "C++"

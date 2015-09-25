@@ -2,7 +2,7 @@
  * util.hpp
  *
  *  Created on: Aug 6, 2015
- *      Author: wfeehery17
+ *      Author: mailmindlin
  */
 
 #ifndef UTIL_UTIL_HPP_

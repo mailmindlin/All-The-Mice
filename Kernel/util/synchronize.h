@@ -2,7 +2,7 @@
  * synchronize.h
  *
  *  Created on: Aug 6, 2015
- *      Author: wfeehery17
+ *      Author: mailmindlin
  */
 
 #ifndef UTIL_SYNCHRONIZE_H_

@@ -2,7 +2,7 @@
  * Mailbox.h
  *
  *  Created on: Aug 5, 2015
- *      Author: wfeehery17
+ *      Author: mailmindlin
  */
 
 #ifndef IO_DISPLAY_MAILBOX_H_
