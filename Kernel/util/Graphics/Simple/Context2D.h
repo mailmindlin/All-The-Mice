@@ -2,7 +2,7 @@
  * Context2D.h
  *
  *  Created on: Sep 25, 2015
- *      Author: wfeehery
+ *      Author: mailmindlin
  */
 
 #ifndef IO_DISPLAY_CONTEXT2D_CONTEXT2D_H_
@@ -26,12 +26,12 @@ public:
 
 	void setLineWidth(double width);
 	double getLineWidth();
-
 	void setFillColor(TScreenColor color);
 	TScreenColor getFillColor();
-
 	void setStrokeColor(TScreenColor color);
 	TScreenColor getStrokeColor();
+	void setAlpha(float alpha);
+	
 
 	Gradient2D* createLinearGradient(u32 x0, u32 y0, u32 x1, u32 y1);
 	Gradient2D* createRadialGradient(u32 x0, u32 y0, u32 r0, u32 x1, u32 y1, u32 r1);
@@ -55,7 +55,9 @@ public:
 
 	void fill();
 	void stroke();
-
+	
+	void save();
+	void restore();
 
 };
 
