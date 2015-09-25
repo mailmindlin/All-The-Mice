@@ -1,23 +1,23 @@
 /*
- * Gradient2D.cpp
+ * Context2DState.cpp
  *
  *  Created on: Sep 25, 2015
  *      Author: wfeehery
  */
 
-#include "Gradient2D.h"
+#include "Context2DState.h"
 
 namespace Graphics {
 namespace Simple {
 
-Gradient2D::Gradient2D() {
+Context2DState::Context2DState() {
 	// TODO Auto-generated constructor stub
 
 }
 
-Gradient2D::~Gradient2D() {
+Context2DState::~Context2DState() {
 	// TODO Auto-generated destructor stub
 }
 
-} /* namespace Display */
-} /* namespace Peripherals */
+} /* namespace Simple */
+} /* namespace Graphics */

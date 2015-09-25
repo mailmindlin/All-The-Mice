@@ -8,8 +8,8 @@
 #ifndef IO_DISPLAY_CONTEXT2D_GRADIENT2D_H_
 #define IO_DISPLAY_CONTEXT2D_GRADIENT2D_H_
 
-namespace Peripherals {
-namespace Display {
+namespace Graphics {
+namespace Simple {
 
 class Gradient2D {
 public:
