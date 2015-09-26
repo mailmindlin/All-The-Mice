@@ -1,33 +1,23 @@
-/*
- * MemAddr.h
- * Memory addresses for a bunch of peripherals (so if I get the addresses wrong, I can fix it without
- * changing every reference to these, like if they are different on the RPi2 for something.
- *  Created on: Feb 25, 2015
+/**
+ * memaddr.cpp
+ *
+ *  Created on: Sep 25, 2015
  *      Author: mailmindlin
  */
 
-#ifndef IO_MEMADDR_HPP_
-#define IO_MEMADDR_HPP_
+#ifndef IO_MEMORY_MEMADDR_CPP_
+#define IO_MEMORY_MEMADDR_CPP_
 
-#include <stddef.h>
-#include <cstdint>
+#include "memaddr.h"
 
 namespace MemoryMap {
-typedef const uint32_t memconst_t;
-typedef const uint32_t* volatile memptr_t;
-typedef volatile uint32_t		REG32RW;
-typedef volatile const uint32_t	REG32RO;
-typedef volatile uint32_t		REG32WO;
-typedef const uint32_t			RESRV32;
-//Some values from https://github.com/rsta2/circle/blob/master/include/circle/bcm2835.h
+
 #define RCST(name, base, offset)	memconst_t name = (base + offset)
 #define RPTR(name, base, offset)	memptr_t name = (memptr_t)(base + offset)
 #define BCST(name, offset)			RCST(name, BCM_IO_BASE, offset)
 #define BPTR(name, offset)			RPTR(name, BCM_IO_BASE, offset)
 
-#ifndef __RPI_REVISION
-	#define __RPI_REVISION 2
-#endif
+//Some values from https://github.com/rsta2/circle/blob/master/include/circle/bcm2835.h
 
 //memconst_t GPU_BASE				= 0x7E000000;
 #if __RPI_REVISION == 1
@@ -38,51 +28,8 @@ typedef const uint32_t			RESRV32;
 
 
 BCST(GPIO_BASE,0x00200000); //0x20200000
-struct _GPREGS {
-	REG32RW GPFSEL0		: 32;
-	REG32RW GPFSEL1		: 32;
-	REG32RW GPFSEL2		: 32;
-	REG32RW GPFSEL3		: 32;
-	REG32RW GPFSEL4		: 32;
-	REG32RW GPFSEL5		: 32;
-	RESRV32 RESERVED0	: 32;
-	REG32WO GPSET0		: 32;
-	REG32WO GPSET1		: 32;
-	RESRV32 RESERVED1	: 32;
-	REG32WO GPCLR0		: 32;
-	REG32WO GPCLR1		: 32;
-	RESRV32 RESERVED2	: 32;
-	REG32RO GPLEV0		: 32;
-	REG32RO GPLEV1		: 32;
-	RESRV32 RESERVED3	: 32;
-	REG32RW GPEDS0		: 32;
-	REG32RW GPEDS1		: 32;
-	RESRV32 RESERVED4	: 32;
-	REG32RW GPREN0		: 32;
-	REG32RW GPREN1		: 32;
-	RESRV32 RESERVED5	: 32;
-	REG32RW GPFEN0		: 32;
-	REG32RW GPFEN1		: 32;
-	RESRV32 RESERVED6	: 32;
-	REG32RW GPHEN0		: 32;
-	REG32RW GPHEN1		: 32;
-	RESRV32 RESERVED7	: 32;
-	REG32RW GPLEN0		: 32;
-	REG32RW GPLEN1		: 32;
-	RESRV32 RESERVED8	: 32;
-	REG32RW GPAREN0		: 32;
-	REG32RW GPAREN1		: 32;
-	RESRV32 RESERVED9	: 32;
-	REG32RW GPAFEN0		: 32;
-	REG32RW GPAFEN1		: 32;
-	RESRV32 RESERVEDA	: 32;
-	REG32RW GPPUD		: 32;
-	REG32RW GPPUDCLK0	: 32;
-	REG32RW GPPUDCLK1	: 32;
-	RESRV32 RESERVEDB	: 32;
-	REG32RW TEST		: 32;
-};
-const _GPREGS *GPIO_REGS = (const _GPREGS*)GPIO_BASE;
+
+const GPREGS *GPIO_REGS = (const GPREGS*)GPIO_BASE;
 
 size_t		BLOCK_SIZE			= (4*1024);
 BCST(BSC0_ADDRESS, 0x00205000);

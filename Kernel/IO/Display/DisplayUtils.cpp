@@ -7,8 +7,8 @@
  * Provides many helpful functions involving RGB colors of different bitdepths, to make life easier
  */
 
-#ifndef IO_DISPLAY_DISPLAYUTILS_HPP_
-#define IO_DISPLAY_DISPLAYUTILS_HPP_
+#ifndef IO_DISPLAY_DISPLAYUTILS_CPP_
+#define IO_DISPLAY_DISPLAYUTILS_CPP_
 
 #include <stddef.h>
 #include <cstdint>
@@ -64,4 +64,4 @@ template<typename T> int sgn(T val) {
 	return (T(0) < val) - (val < T(0));
 }
 
-#endif /* IO_DISPLAY_DISPLAYUTILS_HPP_ */
+#endif /* IO_DISPLAY_DISPLAYUTILS_CPP_ */

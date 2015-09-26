@@ -11,10 +11,11 @@
 #include <cstdint>
 #include "FrameBufferDescription.hpp"
 #include "Mailbox.h"
-#include "DisplayUtils.hpp"
 #include "../../util/synchronize.h"
 #include "../../util/util.hpp"
-#include "../memaddr.hpp"
+#include "../Memory/memaddr.h"
+#include "../util/memset.h"
+#include "DisplayUtils.cpp"
 
 namespace Peripherals {
 namespace Display {

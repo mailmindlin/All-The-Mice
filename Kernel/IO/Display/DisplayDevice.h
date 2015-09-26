@@ -13,9 +13,9 @@
 #include <cstdlib>
 
 #include "../Device.h"
-#include "DisplayUtils.hpp"
-#include "DisplayStatus.hpp"
 #include "DisplayState.hpp"
+#include "DisplayStatus.hpp"
+#include "DisplayUtils.cpp"
 #include "Framebuffer.h"
 
 namespace Peripherals {

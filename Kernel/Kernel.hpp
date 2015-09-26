@@ -12,8 +12,8 @@
 #include "IO/Display/Framebuffer.h"
 #include <stdlib.h>
 #include "IO/Display/DisplayDevice.h"
-#include "IO/Display/DisplayUtils.hpp"
 #include <cstdint>
+#include "IO/Display/DisplayUtils.cpp"
 
 extern "C" {
 /**

@@ -7,45 +7,59 @@ KERNEL = $(current_dir)/Kernel
 rwildcard=$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
 winsfix = $(subst /,\,$(1))
 
-CPPTARGETx = $(patsubst %.cpp, $(abspath %.o), $(call rwildcard, Kernel, *.cpp))
-ASMTARGETx = asm/rpi/
+CTARGETS = $(patsubst Kernel/%.c, $(BIN)/cpp/%.o, $(call rwildcard, Kernel, *.c))
+CPPTARGETS = $(filter-out Kernel/Kernel.o,$(patsubst Kernel/%.cpp, $(BIN)/cpp/%.o, $(call rwildcard, Kernel, *.cpp)))
+ASMTARGETS = $(BIN)/asm/memset.o bin/asm/memcpy.o bin/asm/mailbox.o bin/asm/framebuffer.o bin/asm/armmodes.o
+BLT = $(BIN)/asm/bootloader.o
+BLS = asm/rpi/start.s
 
 # OS-Specific tasks
 ifeq ($(OS),Windows_NT)
-	CPPTARGETS = $(call winsfix, $(CPPTARGETx))
-	ASMTARGETS = $(call winsfix, $(ASMTARGETx))
+	RM = rd /Q /S
 else
-	echo "boop"
 	CPPTARGETS = $(CPPTARGETx)
 	include Make_NIX
 endif
 
-all: buildCpp
+all: buildAsm buildCpp
 	@echo version 5.1
 	@echo $(CPP)
 
-buildCpp: bin/kernel
-	$(CPP) $(CPPFLAGS) -c E:\Documents\GitHub\All-The-Mice\Kernel\Kernel.cpp -o E:\Documents\GitHub\All-The-Mice\bin\kernel\Kernel.o
+buildCpp: $(BIN) $(CPPTARGETS) $(CTARGETS)
 
-buildAsm: bin/asm
+buildAsm: $(BIN)/asm $(ASMTARGETS)
+
+bootloader: $(BIN)/asm
+	$(AS) $(AFLAGS) -c -o $(BLT) $(BLS)
+
+link:
+	$(CPP) $(LDFLAGS) -o $(ELF) Kernel/Kernel.cpp $(BLT) $(ASMTARGETS) $(CPPTARGETS) $(CTARGETS)
 	
 
-bin:
-	mkdir bin
+$(BIN):
+	@-mkdir $(BIN)
+	@-mkdir $(BIN)/cpp
+	@-mkdir $(BIN)/cpp/IO
+	@-mkdir $(BIN)/cpp/IO/Display
+	@-mkdir $(BIN)/cpp/util
 
-bin/kernel: bin
-	@md bin\kernel
+$(BIN)/cpp: $(BIN)
+	@md bin\cpp
 
-bin/asm: bin
-	@md bin\asm
+$(BIN)/asm: $(BIN)
+	@-md $(BIN)\asm
 
-%.o: %.S
+$(BIN)/asm/%.o: asm/rpi/%.S
+	@echo :building $<
 	$(AS) $(AFLAGS) -c -o $@ $<
 
-%.o: %.c
-	@echo building C
+$(BIN)/cpp/%.o: Kernel/%.c
+	@echo :building $<
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-Kernel/%.o: Kernel/%.cpp
-	@echo building CPP
+$(BIN)/cpp/%.o: Kernel/%.cpp
+	@echo :building $<
 	$(CPP) $(CPPFLAGS) -c -o $@ $<
+
+clean:
+	@-rd /Q /S $(BIN)

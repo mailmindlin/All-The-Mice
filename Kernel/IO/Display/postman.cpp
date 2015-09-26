@@ -6,12 +6,12 @@
  * TODO: DEPRECATED
  */
 
-#ifndef IO_DISPLAY_POSTMAN_HPP_
-#define IO_DISPLAY_POSTMAN_HPP_
+#ifndef IO_DISPLAY_POSTMAN_CPP_
+#define IO_DISPLAY_POSTMAN_CPP_
 
 #include <cstdint>
 
-#include "../memaddr.hpp"
+#include "../Memory/memaddr.h"
 
 using namespace MemoryMap;
 namespace Displays {
@@ -65,4 +65,4 @@ uint32_t readMailbox() {
 }
 }
 
-#endif /* IO_DISPLAY_POSTMAN_HPP_ */
+#endif /* IO_DISPLAY_POSTMAN_CPP_ */

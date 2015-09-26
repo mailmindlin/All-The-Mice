@@ -5,8 +5,8 @@
  *      Author: mailmindlin
  */
 
-#ifndef IO_DISPLAY_DISPLAYSTATE_HPP_
-#define IO_DISPLAY_DISPLAYSTATE_HPP_
+#ifndef IO_DISPLAY_DISPLAYSTATE_CPP_
+#define IO_DISPLAY_DISPLAYSTATE_CPP_
 namespace Peripherals {
 namespace Display {
 enum TDisplayState
@@ -22,4 +22,4 @@ enum TDisplayState
 };
 }
 }
-#endif /* IO_DISPLAY_DISPLAYSTATE_HPP_ */
+#endif /* IO_DISPLAY_DISPLAYSTATE_CPP_ */
