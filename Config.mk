@@ -1,5 +1,7 @@
 #          ============Configuration==============
 
+# Compilation options
+VERBOSE = false
 #Raspberry Pi info
 #Available models
 MODEL_A1  = 0
@@ -43,7 +45,7 @@ else
 	CPU ?= arm1176jzf
 endif
 
-GFLG = -march=$(strip $(ARCH)) -mfloat-abi=softfp -I $(KERNEL)
+GFLG = -march=$(strip $(ARCH)) -mfloat-abi=softfp
 ifdef FPU
 	GFLG += -mfpu=$(strip $(FPU))
 endif
@@ -51,10 +53,13 @@ endif
 AFLAGS   ?= $(GFLG) -I $(KERNEL) --defsym __RPI_REVISION=$(strip $(RPI_REVISION))  --defsym __RPI_MODEL=$(strip $(RPI_MODEL)) --defsym __REALCOMP__=1\
 	-warn --statistics -k -v -mcpu=$(strip $(CPU))
 CFLAGS   ?= $(GFLG) -mtune=$(strip $(CPU)) -D__RPI_MODEL=$(strip $(RPI_MODEL)) -D__RPI_REVISION=$(strip $(RPI_REVISION)) -D__REALCOMP__ -D__arm__\
-	-std=gnu++11 -Wall -Wextra -Wno-psabi -fsigned-char -ftree-vectorize -ffast-math
+	-std=gnu++11 -Wall -Wextra -Wno-psabi -fsigned-char -ftree-vectorize -ffast-math -I Kernel
+ifeq ($(VERBOSE),true)
+	CFLAGS += -v
+endif
 CPPFLAGS ?= $(CFLAGS) -I Kernel/util -Wno-write-strings
 LDFLAGS ?= $(CPPFLAGS) -I $(BIN)/cpp -I $(BIN)/asm -I Kernel -I asm/rpi \
-	-fPIC -ffreestanding -Wextra -nostartfiles -fexceptions -v \
+	-fPIC -ffreestanding -Wextra -nostartfiles -fexceptions \
 	-Wl,-T,linker/rpi.ld -Wl,-Map,$(MAP) -Wl,-static -Wl,--gc-sections -Wl,--verbose -Wa,-mcpu=$(CPU)
 # CFLAGS   ?= $(GFLG) -undef -Wall -Wextra -Wno-psabi -fsigned-char
 # CPPFLAGS ?= $(GFLG) -undef -Wall -Wextra -Wno-psabi -fsigned-char 

@@ -8,6 +8,8 @@
 #ifndef IO_DISPLAY_CONTEXT2D_GRADIENT2D_H_
 #define IO_DISPLAY_CONTEXT2D_GRADIENT2D_H_
 
+#include <IO/Display/DisplayUtils.h>
+
 namespace Graphics {
 namespace Simple {
 

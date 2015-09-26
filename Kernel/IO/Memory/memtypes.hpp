@@ -12,12 +12,12 @@
 
 namespace MemoryMap {
 
-typedef const uint32_t memconst_t;
-typedef const uint32_t* volatile memptr_t;
-typedef volatile uint32_t		REG32RW;
-typedef volatile const uint32_t	REG32RO;
-typedef volatile uint32_t		REG32WO;
-typedef const uint32_t			RESRV32;
+typedef const uint32_t				memconst_t;
+typedef volatile uint32_t* const	memptr_t;
+typedef volatile uint32_t			REG32RW;
+typedef volatile const uint32_t		REG32RO;
+typedef volatile uint32_t			REG32WO;
+typedef const uint32_t				RESRV32;
 
 }
 

@@ -25,29 +25,33 @@ all: buildAsm buildCpp
 	@echo version 5.1
 	@echo $(CPP)
 
-buildCpp: $(BIN) $(CPPTARGETS) $(CTARGETS)
+compile: buildCpp buildAsm bootloader
 
-buildAsm: $(BIN)/asm $(ASMTARGETS)
+buildCpp: bin/cpp $(CPPTARGETS) $(CTARGETS)
 
-bootloader: $(BIN)/asm
+buildAsm: bin/asm $(ASMTARGETS)
+
+bootloader: bin/asm
 	$(AS) $(AFLAGS) -c -o $(BLT) $(BLS)
 
 link:
 	$(CPP) $(LDFLAGS) -o $(ELF) Kernel/Kernel.cpp $(BLT) $(ASMTARGETS) $(CPPTARGETS) $(CTARGETS)
 	
 
-$(BIN):
-	@-mkdir $(BIN)
-	@-mkdir $(BIN)/cpp
-	@-mkdir $(BIN)/cpp/IO
-	@-mkdir $(BIN)/cpp/IO/Display
-	@-mkdir $(BIN)/cpp/util
+bin:
+	@-make1 bin
+	@-mkdir -p bin
 
-$(BIN)/cpp: $(BIN)
-	@md bin\cpp
+bin/cpp: bin
+	@-make1 bincpp
+	@-mkdir -p bin/cpp/IO/Display
+	@-mkdir -p bin/cpp/IO/Memory
+	@-mkdir -p bin/cpp/newlib
+	@-mkdir -p bin/cpp/util/Graphics/Simple
 
-$(BIN)/asm: $(BIN)
-	@-md $(BIN)\asm
+bin/asm: bin
+	@-make1 binasm
+	@-mkdir -p bin/asm
 
 $(BIN)/asm/%.o: asm/rpi/%.S
 	@echo :building $<
@@ -59,7 +63,9 @@ $(BIN)/cpp/%.o: Kernel/%.c
 
 $(BIN)/cpp/%.o: Kernel/%.cpp
 	@echo :building $<
+	@echo CppFlags: $(CPPFLAGS)
 	$(CPP) $(CPPFLAGS) -c -o $@ $<
 
 clean:
-	@-rd /Q /S $(BIN)
+	@-make1 clean
+	@-rm -rf bin

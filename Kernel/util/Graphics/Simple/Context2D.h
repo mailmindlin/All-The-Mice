@@ -8,15 +8,15 @@
 #ifndef IO_DISPLAY_CONTEXT2D_CONTEXT2D_H_
 #define IO_DISPLAY_CONTEXT2D_CONTEXT2D_H_
 
-#include "../DisplayDevice.h"
-#include "../DisplayUtils.hpp"
+#include <cstdint>
+#include <cmath>
+#include <stack>
+#include <IO/Display/DisplayDevice.h>
+
 #include "Context2DState.h"
 #include "Gradient2D.h"
 #include "Point2D.h"
 #include "GraphicsUtil.h"
-#include <cstdint>
-#include <cmath>
-#include <stack>
 
 namespace Graphics {
 namespace Simple {
@@ -25,22 +25,14 @@ using Peripherals::Display::DisplayDevice;
 
 #define SEGMENTS 12
 
-#ifndef __REALCOMP__
-typedef unsigned int u32;
-//HORRIBLE device to make errors stop annoying you
-#define sin(x) x
-#define cos(x) x
-#define PI 3.1415267
-#endif
-
 class Context2D {
 public:
 	Context2D(DisplayDevice* parent);
 	virtual ~Context2D();
 
-	void clearRect(u32 x, u32 y, u32 width, u32 height);
-	void fillRect(u32 x, u32 y, u32 width, u32 height);
-	void strokeRect(u32 x, u32 y, u32 width, u32 height);
+	void clearRect(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
+	void fillRect(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
+	void strokeRect(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
 
 	void setLineWidth(float width);
 	float getLineWidth() const;
@@ -52,33 +44,33 @@ public:
 	float getAlpha() const;
 	
 
-	Gradient2D* createLinearGradient(u32 x0, u32 y0, u32 x1, u32 y1);
-	Gradient2D* createRadialGradient(u32 x0, u32 y0, u32 r0, u32 x1, u32 y1, u32 r1);
+	Gradient2D* createLinearGradient(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1);
+	Gradient2D* createRadialGradient(uint32_t x0, uint32_t y0, uint32_t r0, uint32_t x1, uint32_t y1, uint32_t r1);
 
 	void beginPath();
 	void closePath();
 	void moveTo(Point2D& p);
-	void moveTo(u32 x, u32 y);
+	void moveTo(uint32_t x, uint32_t y);
 	void moveTo(float x, float y);
 	void lineTo(Point2D& p);
-	void lineTo(u32 x, u32 y);
+	void lineTo(uint32_t x, uint32_t y);
 	void lineTo(float x, float y);
-	void bezierCurveTo(u32 cp1x, u32 cp1y, u32 cp2x, u32 cp2y, u32 x, u32 y);
-	void quadraticCurveTo(u32 cpx, u32 cpy, u32 x, u32 y);
-	void arc(u32 x, u32 y, u32 radius, float startAngle, float endAngle) {
+	void bezierCurveTo(uint32_t cp1x, uint32_t cp1y, uint32_t cp2x, uint32_t cp2y, uint32_t x, uint32_t y);
+	void quadraticCurveTo(uint32_t cpx, uint32_t cpy, uint32_t x, uint32_t y);
+	void arc(uint32_t x, uint32_t y, uint32_t radius, float startAngle, float endAngle) {
 		this->arc(x,y,radius,startAngle, endAngle, false);
 	};
-	void arc(u32 x, u32 y, u32 radius, float startAngle, float endAngle, bool counterclockwise);
-	void arcTo(u32 x0, u32 y0, u32 x1, u32 y1, u32 radius);
+	void arc(uint32_t x, uint32_t y, uint32_t radius, float startAngle, float endAngle, bool counterclockwise);
+	void arcTo(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1, uint32_t radius);
 	void ellipse(float x, float y, float radiusX, float radiusY, float rotation, float startAngle, float endAngle) {
 		this->ellipse(x,y,radiusX, radiusY, rotation, startAngle, endAngle);
 	};
-	void ellipse(u32 x, u32 y, u32 radiusX, u32 radiusY, float rotation, float startAngle, float endAngle) {
+	void ellipse(uint32_t x, uint32_t y, uint32_t radiusX, uint32_t radiusY, float rotation, float startAngle, float endAngle) {
 		this->ellipse(x,y,radiusX, radiusY, rotation, startAngle, endAngle);
 	};
-	void ellipse(u32 x, u32 y, u32 radiusX, u32 radiusY, float rotation, float startAngle, float endAngle, bool counterclockwise);
+	void ellipse(uint32_t x, uint32_t y, uint32_t radiusX, uint32_t radiusY, float rotation, float startAngle, float endAngle, bool counterclockwise);
 	void ellipse(float x, float y, float radiusX, float radiusY, float rotation, float startAngle, float endAngle, bool counterclockwise);
-	void rect(u32 x, u32 y, u32 width, u32 height);
+	void rect(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
 
 	void fill();
 	void stroke();
@@ -86,7 +78,7 @@ public:
 	void save();
 	void restore();
 protected:
-	std::stack <Context2DState>* stateStack;
+	std::stack <Context2DState*>* stateStack;
 
 };
 

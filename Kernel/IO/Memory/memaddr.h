@@ -18,20 +18,20 @@ namespace MemoryMap {
 
 //Some values from https://github.com/rsta2/circle/blob/master/include/circle/bcm2835.h
 
-#define HRPTR(name) extern "C++" memptr_t name
-#define HBCST(name) extern "C++" memconst_t name
+#define HRPTR(name) extern memptr_t name
+#define HBCST(name) extern memconst_t name
 
 #ifndef __RPI_REVISION
 	#define __RPI_REVISION 2
 #endif
 
-extern "C++" memconst_t BCM_IO_BASE;
+extern memconst_t	BCM_IO_BASE;
 
-extern "C++" memconst_t GPIO_BASE;
+extern memconst_t	GPIO_BASE;
 
-extern "C++" const GPREGS *GPIO_REGS;
+extern const GPREGS	*GPIO_REGS;
 
-extern "C++" size_t		BLOCK_SIZE;
+extern size_t		BLOCK_SIZE;
 HBCST(BSC0_ADDRESS);
 HBCST(BSC1_ADDRESS);
 HBCST(BSC2_ADDRESS);

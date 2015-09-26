@@ -9,6 +9,7 @@
 #define UTIL_GRAPHICS_SIMPLE_GRAPHICSUTIL_H_
 
 #include "Point2D.h"
+#include <cmath>
 
 namespace Graphics {
 namespace Simple {

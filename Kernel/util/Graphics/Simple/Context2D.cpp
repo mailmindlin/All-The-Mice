@@ -19,13 +19,14 @@ Context2D::~Context2D() {
 	// TODO Auto-generated destructor stub
 }
 
-void Context2D::clearRect(u32 x, u32 y, u32 width, u32 height) {
+void Context2D::clearRect(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
+
 }
 
-void Context2D::fillRect(u32 x, u32 y, u32 width, u32 height) {
+void Context2D::fillRect(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
 }
 
-void Context2D::strokeRect(u32 x, u32 y, u32 width, u32 height) {
+void Context2D::strokeRect(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
 }
 
 void Context2D::setLineWidth(float width) {
@@ -49,11 +50,11 @@ TScreenColor Context2D::getStrokeColor() const {
 void Context2D::setAlpha(float alpha) {
 }
 
-Gradient2D* Context2D::createLinearGradient(u32 x0, u32 y0, u32 x1, u32 y1) {
+Gradient2D* Context2D::createLinearGradient(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1) {
 }
 
-Gradient2D* Context2D::createRadialGradient(u32 x0, u32 y0, u32 r0, u32 x1,
-		u32 y1, u32 r1) {
+Gradient2D* Context2D::createRadialGradient(uint32_t x0, uint32_t y0, uint32_t r0, uint32_t x1,
+		uint32_t y1, uint32_t r1) {
 }
 
 void Context2D::beginPath() {
@@ -62,27 +63,27 @@ void Context2D::beginPath() {
 void Context2D::closePath() {
 }
 
-void Context2D::moveTo(u32 x, u32 y) {
+void Context2D::moveTo(uint32_t x, uint32_t y) {
 }
 void Context2D::moveTo(Point2D &p) {
 	this->moveTo(p.x, p.y);
 }
 
-void Context2D::lineTo(u32 x, u32 y) {
+void Context2D::lineTo(uint32_t x, uint32_t y) {
 }
 
-void Context2D::bezierCurveTo(u32 cp1x, u32 cp1y, u32 cp2x, u32 cp2y, u32 x,
-		u32 y) {
+void Context2D::bezierCurveTo(uint32_t cp1x, uint32_t cp1y, uint32_t cp2x, uint32_t cp2y, uint32_t x,
+		uint32_t y) {
 }
 
-void Context2D::quadraticCurveTo(u32 cpx, u32 cpy, u32 x, u32 y) {
+void Context2D::quadraticCurveTo(uint32_t cpx, uint32_t cpy, uint32_t x, uint32_t y) {
 }
 
-void Context2D::arc(u32 x, u32 y, u32 radius, float startAngle, float endAngle,
+void Context2D::arc(uint32_t x, uint32_t y, uint32_t radius, float startAngle, float endAngle,
 		bool counterclockwise) {
 }
 
-void Context2D::arcTo(u32 x0, u32 y0, u32 x1, u32 y1, u32 radius) {
+void Context2D::arcTo(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1, uint32_t radius) {
 }
 
 void Context2D::ellipse(float centerX, float centerY, float radiusX, float radiusY, float rotation,
@@ -99,7 +100,7 @@ void Context2D::ellipse(float centerX, float centerY, float radiusX, float radiu
 	this->moveTo(firstPoint);
 
 	for (int i = 1; i < SEGMENTS; i++) {
-		float rad = float(i)/float(SEGMENTS) * PI * 2.00;
+		float rad = float(i)/float(SEGMENTS) * M_PI * 2.00;
 		currentPoint.x = centerX + radiusX * sin(rad);
 		currentPoint.y = centerY + radiusY * cos(rad);
 
@@ -111,7 +112,7 @@ void Context2D::ellipse(float centerX, float centerY, float radiusX, float radiu
 	this->lineTo(firstPoint);
 }
 
-void Context2D::rect(u32 x, u32 y, u32 width, u32 height) {
+void Context2D::rect(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
 
 }
 
@@ -123,7 +124,7 @@ void Context2D::stroke() {
 }
 
 void Context2D::save() {
-	stateStack->push(new Context2DState(stateStack->pop()));
+	stateStack->push(new Context2DState(*stateStack->top()));
 }
 
 void Context2D::restore() {

@@ -10,11 +10,14 @@
 
 namespace Graphics {
 namespace Simple {
+
+#include <IO/Display/DisplayUtils.h>
+
 class Context2D {
-	u32 getWidth() const;
-	u32 getHeight() const;
-	TScreenColor getPixel(u32 x, u32 y) const;
-	void setPixel(u32 x, u32 y, TScreenColor c);
+	uint32_t getWidth() const;
+	uint32_t getHeight() const;
+	TScreenColor getPixel(uint32_t x, uint32_t y) const;
+	void setPixel(uint32_t x, uint32_t y, TScreenColor c);
 
 	Context2D getContext2D();
 };
