@@ -11,7 +11,7 @@
 
 #include <cstdint>
 
-#include "../memaddr.hpp"
+#include "../Memory/memaddr.h"
 
 using namespace MemoryMap;
 namespace Displays {
