@@ -10,7 +10,7 @@
 
 #include <cstdint>
 #include "../../util/stdasm.cpp"
-#include "../memaddr.hpp"
+#include "../Memory/memaddr.h"
 
 namespace Peripherals {
 namespace Display {

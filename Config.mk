@@ -14,7 +14,8 @@ RPI_MODEL ?= $(MODEL_B1) # May be one of the above defined models
 RPI_REVISION ?= 2
 
 #Compiler info
-PRE = arm-none-eabi- #set to the prefix for yagarto on your computer
+#set to the prefix for yagarto on your computer
+PRE = arm-none-eabi-
 CC = $(PRE)gcc
 CPP = $(PRE)g++
 AS = $(PRE)as
@@ -24,27 +25,36 @@ OBJCP = $(PRE)objcopy
 OBJDP = $(PRE)objdump
 RANLIB = $(PRE)ranlib
 
+# File output options
+BIN :=  bin
+ELF =  $(BIN)/kernel.elf
+MAP =  $(BIN)/kernel.map
+LIST = $(BIN)/kernel.list
+OUT =  $(BIN)/Kernel.img
 
 #          =============End Config================
 
-
 ifeq ($(strip $(RPI_REVISION)),2)
 	ARCH ?= armv7-a
-	TUNE ?= cortex-a7
+	CPU ?= cortex-a7
 	FPU  ?= neon-vfpv4
 else
 	ARCH ?= armv6j
-	TUNE ?= arm1176jzf
+	CPU ?= arm1176jzf
 endif
 
-GFLG = -std=gnu++11 -march=$(strip $(ARCH)) -mtune=$(strip $(TUNE)) -mfloat-abi=hard -D__RPI_MODEL=$(strip $(RPI_MODEL))\
-	-D__RPI_REVISION=$(strip $(RPI_REVISION)) -I $(KERNEL) -D__REALCOMP__ -D__arm__
+GFLG = -march=$(strip $(ARCH)) -mfloat-abi=softfp -I $(KERNEL)
 ifdef FPU
 	GFLG += -mfpu=$(strip $(FPU))
 endif
 
-AFLAGS   ?= $(GFLG) -I $(KERNEL)
-CFLAGS   ?= $(GFLG) -undef -Wall -Wextra -Wno-psabi -fsigned-char
-CPPFLAGS ?= $(GFLG) -undef -Wall -Wno-psabi -fsigned-char -I Kernel/util -Wno-write-strings
+AFLAGS   ?= $(GFLG) -I $(KERNEL) --defsym __RPI_REVISION=$(strip $(RPI_REVISION))  --defsym __RPI_MODEL=$(strip $(RPI_MODEL)) --defsym __REALCOMP__=1\
+	-warn --statistics -k -v -mcpu=$(strip $(CPU))
+CFLAGS   ?= $(GFLG) -mtune=$(strip $(CPU)) -D__RPI_MODEL=$(strip $(RPI_MODEL)) -D__RPI_REVISION=$(strip $(RPI_REVISION)) -D__REALCOMP__ -D__arm__\
+	-std=gnu++11 -Wall -Wextra -Wno-psabi -fsigned-char -ftree-vectorize -ffast-math
+CPPFLAGS ?= $(CFLAGS) -I Kernel/util -Wno-write-strings
+LDFLAGS ?= $(CPPFLAGS) -I $(BIN)/cpp -I $(BIN)/asm -I Kernel -I asm/rpi \
+	-fPIC -ffreestanding -Wextra -nostartfiles -fexceptions -v \
+	-Wl,-T,linker/rpi.ld -Wl,-Map,$(MAP) -Wl,-static -Wl,--gc-sections -Wl,--verbose -Wa,-mcpu=$(CPU)
 # CFLAGS   ?= $(GFLG) -undef -Wall -Wextra -Wno-psabi -fsigned-char
 # CPPFLAGS ?= $(GFLG) -undef -Wall -Wextra -Wno-psabi -fsigned-char 

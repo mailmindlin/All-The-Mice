@@ -2,7 +2,7 @@
  * prelib.h
  *
  * A colection of all the stuff that you have to fix before importing anything from the
- * stl.
+ * stl, because Yagarto is tempermental.
  *
  *  Created on: Sep 24, 2015
  *      Author: mailmindlin
