@@ -110,8 +110,10 @@ void DisplayDevice::drawLine(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1,
 	}
 }
 size_t DisplayDevice::drawChar(uint32_t x, uint32_t y, char c, TScreenColor color) {
-	if (c < 0x20 || c == 0x7F)
+	if (c < 0x20 || c == 0x7F)//C0 control character or DEL
 		return 0;
+	if (c == 0x20)//space
+		return 8;
 	//this is why I don't like little-endian ANYTHING. I could have done it much easily if it was BE!!!
 	//TODO convert
 	uint64_t bitmap = toncfontTiles[c - 0x20];
@@ -128,24 +130,29 @@ size_t DisplayDevice::drawChar(uint32_t x, uint32_t y, char c, TScreenColor colo
 	return 8;
 }
 
-void DisplayDevice::drawText(uint32_t x0, uint32_t y0, char* text, TScreenColor color) {
+void DisplayDevice::drawText(uint32_t x0, uint32_t y0, char* str, size_t length, TScreenColor color) {
 	uint32_t x = x0;
 	uint32_t y = y0;
-	size_t size;
-	while (*text != 0) {
-		char chr = *text;
-		x += (size = drawChar(x, y, chr, color));
-		if (size == 0) {
-			if (chr == '\n') {
-				x = x0;
-				y += 9;
-			} else if (chr == '\t') {
-				x += 56;
-				x += 8 - (x % 8);
+	char chr;
+	while (length-- > 0) {
+		char chr = *str++;
+		size_t width;
+		x+= (width = drawChar(x, y, chr, color));
+		if (width == 0) {
+			switch (chr) {
+				case '\r':
+					x = x0;
+				case '\n':
+					y+= 9;
+					break;
+				case '\t':
+					x += 56;
+					x += 8 - (x % 8);//align
+					break;
 			}
 		}
-		//go to next char
-		text++;
+		if (x > getWidth())
+			x = x0;
 	}
 }
 

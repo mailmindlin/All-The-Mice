@@ -95,9 +95,9 @@ public:
 	 */
 	size_t drawChar(uint32_t x, uint32_t y, char c, TScreenColor color);
 	/**
-	 * Draw a string at the given strings.
+	 * Draw a string at the given coordinates.
 	 */
-	void drawText(uint32_t x, uint32_t y, char* c, TScreenColor color);
+	void drawText(uint32_t x, uint32_t y, char* c, size_t length, TScreenColor color);
 protected:
 	uint32_t initWidth;
 	uint32_t initHeight;
