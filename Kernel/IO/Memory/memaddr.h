@@ -11,6 +11,7 @@
 
 #include <stddef.h>
 
+#include "./util/syscfg.h"
 #include "gpregs.hpp"
 #include "memtypes.hpp"
 
@@ -21,11 +22,7 @@ namespace MemoryMap {
 #define HRPTR(name) extern memptr_t name
 #define HBCST(name) extern memconst_t name
 
-#ifndef __RPI_REVISION
-	#define __RPI_REVISION 2
-#endif
-
-extern memconst_t	BCM_IO_BASE;
+//BCM_BASE is defined in ./util/syscfg.h
 
 extern memconst_t	GPIO_BASE;
 

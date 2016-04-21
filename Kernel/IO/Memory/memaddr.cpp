@@ -14,18 +14,12 @@ namespace MemoryMap {
 
 #define RCST(name, base, offset)	memconst_t name = (base + offset)
 #define RPTR(name, base, offset)	memptr_t name = (memptr_t)(base + offset)
-#define BCST(name, offset)			RCST(name, BCM_IO_BASE, offset)
-#define BPTR(name, offset)			RPTR(name, BCM_IO_BASE, offset)
+#define BCST(name, offset)			RCST(name, BCM_BASE, offset)
+#define BPTR(name, offset)			RPTR(name, BCM_BASE, offset)
 
 //Some values from https://github.com/rsta2/circle/blob/master/include/circle/bcm2835.h
 
 //memconst_t GPU_BASE				= 0x7E000000;
-#if __RPI_REVISION == 1
-	memconst_t	BCM_IO_BASE		= 0x20000000;
-#elif __RPI_REVISION == 2
-	memconst_t BCM_IO_BASE		= 0x3F000000;
-#endif
-
 
 BCST(GPIO_BASE,0x00200000); //0x20200000
 
