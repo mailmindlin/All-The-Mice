@@ -14,6 +14,7 @@
 #include "IO/Display/DisplayDevice.h"
 #include <cstdint>
 #include "IO/Display/DisplayUtils.cpp"
+#include "util/syscfg.h"
 
 extern "C" {
 /**
