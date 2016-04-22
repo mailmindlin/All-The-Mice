@@ -9,22 +9,24 @@
 #define IO_DEVICE_H_
 
 #include <cstdint>
+#include <string>
+#include "DeviceManager.hpp"
 
 namespace Peripherals {
 
 class Device {
-public:
-	Device (void);
-	virtual ~Device (void);
-
-	// returns number of read bytes or < 0 on failure
-	virtual int32_t read (void *pBuffer, uint32_t nCount);
-
-	// returns number of written bytes or < 0 on failure
-	virtual int32_t write (const void *pBuffer, uint32_t nCount);
-
-	// returns the resulting offset, (unsigned long long) -1 on error
-	virtual uint64_t seek (uint64_t ullOffset);		// byte offset
+	friend class DeviceManager;
+	public:
+		Device (void);
+		virtual ~Device (void);
+		std::string* getName();
+		uint16_t getId();
+	protected:
+		bool registerDevice();
+		bool unregisterDevice();
+	private:
+		bool setId(uint16_t id);
+		uint16_t id;
 };
 
 } /* namespace Peripherals */

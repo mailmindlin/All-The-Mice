@@ -6,7 +6,7 @@
  */
 
 #include "Device.h"
-
+#include <iostream>
 namespace Peripherals {
 
 Device::Device(void) {
@@ -15,16 +15,25 @@ Device::Device(void) {
 Device::~Device(void) {
 }
 
-int32_t Device::read(void* pBuffer, uint32_t nCount) {
-	return -1;
+std::string* Device::getName() {
+	std::string* str = new std::string("Unknown Device #");
+	*str << getId();
+	return str;
 }
-
-int32_t Device::write(const void* pBuffer, uint32_t nCount) {
-	return -1;
+uint16_t Device::getId();
+void Device::registerDevice();
+bool Device::unregisterDevice() {
+	DeviceManager* manager = DeviceManager::getInstance();
+	if (manager->unregisterDevice(getId())) {
+		this->setId(-1);
+		return true;
+	} else {
+		return false;
+	}
 }
-
-uint64_t Device::seek(uint64_t ullOffset) {
-	return -1;
+bool Device::setId(uint16_t id) {
+	this->id = id;
+	return true;
 }
 
 

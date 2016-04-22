@@ -21,7 +21,4 @@ typedef const uint32_t				RESRV32;
 
 }
 
-
-
-
 #endif /* IO_MEMORY_MEMTYPES_HPP_ */
