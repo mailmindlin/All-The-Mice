@@ -19,11 +19,11 @@ class Device {
 	public:
 		Device (void);
 		virtual ~Device (void);
-		std::string* getName();
+		virtual std::string* getName();
 		uint16_t getId();
 	protected:
-		bool registerDevice();
-		bool unregisterDevice();
+		virtual bool registerDevice();
+		virtual bool unregisterDevice();
 	private:
 		bool setId(uint16_t id);
 		uint16_t id;

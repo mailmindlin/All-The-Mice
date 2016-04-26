@@ -1,14 +1,17 @@
 #ifndef _IO_GPIO_GPIO_HPP
 #define _IO_GPIO_GPIO_HPP
-#include "../Memory/memaddr.h"
+#include <Kernel/IO/Memory/memaddr.h>
+#include <Kernel/IO/Device.hpp>
 namespace Peripherals {
 	extern "C++"
-	class GPIO {
+	class GPIO : public Device {
 		public:
 			/**
 			 * Get an instance of the GPIO controller.
 			 */
-			static &GPIO getInstance() {
+			static GPIO& getInstance() {
+				if (!GPIO::instance)
+					GPIO::instance = new GPIO();
 				return GPIO::instance;
 			}
 			/**
@@ -78,7 +81,7 @@ namespace Peripherals {
 			bool addPinStore(GpioPinStore* node);
 			class InternalPin;
 		protected:
-			static GPIO instance;
+			static GPIO* instance;
 			GPIO();
 			~GPIO();
 			PinMap* map;

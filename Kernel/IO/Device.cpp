@@ -13,6 +13,7 @@ Device::Device(void) {
 }
 
 Device::~Device(void) {
+	this->unregisterDevice();
 }
 
 std::string* Device::getName() {
@@ -20,8 +21,13 @@ std::string* Device::getName() {
 	*str << getId();
 	return str;
 }
-uint16_t Device::getId();
-void Device::registerDevice();
+uint16_t Device::getId() {
+	return this->id;
+}
+void Device::registerDevice() {
+	DeviceManager* manager = DeviceManager::getInstance();
+	return manager->registerDevice(this);
+}
 bool Device::unregisterDevice() {
 	DeviceManager* manager = DeviceManager::getInstance();
 	if (manager->unregisterDevice(getId())) {

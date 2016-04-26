@@ -27,7 +27,7 @@ namespace Peripherals {
 		if (id > this->deviceArrayCapacity) {
 			//reallocate array, if possible
 			//1.5x
-			uint32_t new_cap = this->deviceArrayCapacity + this->deviceArrayCapacity / 2;
+			size_t new_cap = this->deviceArrayCapacity + this->deviceArrayCapacity / 2;
 			if (new_cap >= USHRT_MAX) {
 				if (this->deviceArrayCapacity == USHRT_MAX)
 					throw new overflow_error("Ran out of device IDs");
@@ -35,14 +35,19 @@ namespace Peripherals {
 			}
 			Device** tmp = this->registeredDevices;
 			this->registeredDevices = realloc(this->registeredDevices, new_cap * sizeof(Device*));
-			//Clear array
+			//Clear mewly allocated memory
 			for (size_t i = this->deviceArrayCapacity; i < new_cap; i++)
 				this->registeredDevices[i] = NULL;
-			this->deviceArrayCapacity = new_cap;
+			this->deviceArrayCapacity = (uint16_t) new_cap;
 			//TODO defragment?
 		}
 		this->registeredDevices[id] = &device;
+		if (id > this->maxDeviceIdx - 1)
+			this->maxDeviceIdx = id + 1;
 		//find the new minFreeIdx
+		for(; this->minFreeIdx < this->deviceArrayCapacity; this->minFreeIdx++)
+			if (!this->registeredDevices[this->minFreeIdx])
+				break;
 	}
 	Device* DeviceManager::lookupDevice(uint16_t id) {
 		if (id >= this->maxDeviceIdx)
