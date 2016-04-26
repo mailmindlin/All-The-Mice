@@ -10,9 +10,13 @@ namespace Peripherals {
 			Device* lookupDevice(uint16_t id);
 			//TODO add a lookup-by-type function
 		protected:
-			DeviceManager();
+			DeviceManager(size_t initialCapacity =  16);
 			~DeviceManager();
 			bool unregisterDevice(uint16_t id);
+			Device** registeredDevices;
+			size_t deviceArrayCapacity;
+			size_t maxDeviceIdx;
+			size_t minFreeIdx;
 			static DeviceManager* INSTANCE;
 	}
 }
