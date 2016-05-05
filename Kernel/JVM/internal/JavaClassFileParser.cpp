@@ -88,9 +88,9 @@ namespace JVM {
 					if (name->equalsIgnoreCase("Code", 4)) {
 						//TODO finish porting
 						char* ca = reinterpret_cast<char*>(p);
-						pCode_attr->attribute_name_index=name_index;//already scanned;
-						pCode_attr->attribute_length=get4(ca);
-						pCode_attr->max_stack=get2(ca);
+						method.codeRef->attribute_name_index=name_index;//already scanned;
+						method.codeRef->attribute_length = get4(ca);
+						method.codeRef->max_stack = get2(ca);
 						pCode_attr->max_locals=get2(ca);
 						pCode_attr->code_length=get4(ca);
 						if(pCode_attr->code_length>0) {
